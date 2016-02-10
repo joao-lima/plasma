@@ -27,7 +27,7 @@ ARCH      ?= ar
 ARCHFLAGS ?= cr
 RANLIB    ?= ranlib
 
-CFLAGS    ?= -fopenmp -O3 -Wall -Wno-unused-variable -std=c99
+CFLAGS    ?= -fopenmp -O3 -Wall -Wno-unused-variable -Wno-unused-function -std=c99
 LDFLAGS   ?= -fopenmp
 
 # INC and LIBS indicate where to find LAPACK, and LAPACKE, and CBLAS
