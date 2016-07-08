@@ -80,6 +80,7 @@ void plasma_pztrsm(PLASMA_enum side, PLASMA_enum uplo,
                    PLASMA_desc B,
                    PLASMA_sequence *sequence, PLASMA_request *request);
 
+
 void plasma_pzooccrb2cm(
     PLASMA_desc A,
     PLASMA_Complex64_t *Af77, int lda,
