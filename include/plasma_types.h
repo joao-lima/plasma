@@ -54,6 +54,7 @@ enum {
     PlasmaNoTrans    = 111,
     PlasmaTrans      = 112,
     PlasmaConjTrans  = 113,
+    Plasma_ConjTrans = PlasmaConjTrans,
 
     PlasmaUpper      = 121,
     PlasmaLower      = 122,
@@ -63,7 +64,16 @@ enum {
     PlasmaUnit       = 132,
 
     PlasmaLeft       = 141,
-    PlasmaRight      = 142
+    PlasmaRight      = 142,
+
+    PlasmaForward    = 391,
+    PlasmaBackward   = 392,
+
+    PlasmaColumnwise = 401,
+    PlasmaRowwise    = 402,
+
+    PlasmaW          = 501,
+    PlasmaA2         = 502
 };
 
 enum {
