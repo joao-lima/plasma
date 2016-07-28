@@ -9,7 +9,7 @@
  *
  * @version 3.0.0
  * @author Pedro V. Lara
- * @date
+ * @date 2016-06-15
  * @precisions normal z -> s d c
  *
  **/
@@ -58,7 +58,7 @@
  * @param[in] lda
  *          The leading dimension of the array A. lda >= max(1,n).
  *
- * *******************************************************************************
+ *******************************************************************************
  *
  * @retval PLASMA_SUCCESS successful exit
  *
@@ -135,10 +135,10 @@ int PLASMA_zpotrf(PLASMA_enum uplo, int n,
     // Initialize request.
     PLASMA_request request = PLASMA_REQUEST_INITIALIZER;
 
-#pragma omp parallel
-#pragma omp master
+    #pragma omp parallel
+    #pragma omp master
     {
-        // the Async functions are submitted here.  If an error occurs
+        // The Async functions are submitted here.  If an error occurs
         // (at submission time or at run time) the sequence->status
         // will be marked with an error.  After an error, the next
         // Async will not _insert_ more tasks into the runtime.  The
