@@ -72,6 +72,13 @@ int PLASMA_Set(PLASMA_enum param, int value)
         }
         plasma->nb = value;
         break;
+    case PLASMA_INNER_BLOCK_SIZE:
+        if (value <= 0) {
+            plasma_error("Negative inner block size");
+            return PLASMA_ERR_ILLEGAL_VALUE;
+        }
+        plasma->ib = value;
+        break;
     default:
         plasma_error("Unknown parameter");
         return PLASMA_ERR_ILLEGAL_VALUE;
@@ -92,6 +99,10 @@ int PLASMA_Get(PLASMA_enum param, int *value)
     switch (param) {
     case PLASMA_TILE_SIZE:
         *value = plasma->nb;
+        return PLASMA_SUCCESS;
+        break;
+    case PLASMA_INNER_BLOCK_SIZE:
+        *value = plasma->ib;
         return PLASMA_SUCCESS;
         break;
     default:
@@ -189,5 +200,6 @@ plasma_context_t *plasma_context_self()
 void plasma_context_init(plasma_context_t *context)
 {
     context->nb = 256;
+    context->ib = 64;
     context->translation = PLASMA_OUTOFPLACE;
 }

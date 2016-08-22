@@ -30,8 +30,6 @@
 
 #define COMPLEX
 
-#define A(i_, j_)  (A + (i_) + (size_t)lda*(j_))
-
 /***************************************************************************//**
  *
  * @brief Tests ZTRSM.
@@ -39,10 +37,9 @@
  * @param[in]  param - array of parameters
  * @param[out] info  - string of column labels or column values; length InfoLen
  *
- * If param is NULL and info is NULL,     print usage and return.
- * If param is NULL and info is non-NULL, set info to column labels and return.
- * If param is non-NULL and info is non-NULL, set info to column values
- * and run test.
+ * If param is NULL     and info is NULL,     print usage and return.
+ * If param is NULL     and info is non-NULL, set info to column headings and return.
+ * If param is non-NULL and info is non-NULL, set info to column values   and run test.
  ******************************************************************************/
 void test_ztrsm(param_value_t param[], char *info)
 {
@@ -61,8 +58,7 @@ void test_ztrsm(param_value_t param[], char *info)
             print_usage(PARAM_ALPHA);
             print_usage(PARAM_PADA);
             print_usage(PARAM_PADB);
-        }
-        else {
+        } else {
             // Return column labels.
             snprintf(info, InfoLen,
                      "%*s %*s %*s %*s %*s %*s %*s %*s %*s",
@@ -164,11 +160,9 @@ void test_ztrsm(param_value_t param[], char *info)
     int ipiv[lda];
     LAPACKE_zgetrf(CblasColMajor, Am, Am, A, lda, ipiv);
 
-    for (int j = 0; j < Am; j++) {
-        for (int i = 0; i < j; i++) {
-            *A(i,j) = *A(j,i);
-        }
-    }
+    for (int j = 0; j < Am; j++)
+        for (int i = 0; i < j; i++)
+            A[i,j] = A[j,i];
 
     retval = LAPACKE_zlarnv(1, seed, (size_t)ldb*n, B);
     assert(retval == 0);
@@ -198,7 +192,7 @@ void test_ztrsm(param_value_t param[], char *info)
         (CBLAS_TRANSPOSE)transa, (CBLAS_DIAG)diag,
         m, n,
         alpha, A, lda,
-        B, ldb);
+               B, ldb);
 
     plasma_time_t stop = omp_get_wtime();
     plasma_time_t time = stop-start;
@@ -223,9 +217,9 @@ void test_ztrsm(param_value_t param[], char *info)
 
         double work[1];
         double Bnorm = LAPACKE_zlange_work(
-            LAPACK_COL_MAJOR, 'F', m, n, Bref, ldb, work);
+                           LAPACK_COL_MAJOR, 'F', m, n, Bref, ldb, work);
         double error = LAPACKE_zlange_work(
-            LAPACK_COL_MAJOR, 'F', m, n, B,    ldb, work);
+                           LAPACK_COL_MAJOR, 'F', m, n, B,    ldb, work);
         if (Bnorm != 0)
             error /= Bnorm;
         param[PARAM_ERROR].d = error;

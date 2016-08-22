@@ -21,6 +21,7 @@ extern "C" {
 /******************************************************************************/
 typedef struct {
     int nb;                  ///< PLASMA_TILE_SIZE
+    int ib;                  ///< PLASMA_INNER_BLOCK_SIZE
     PLASMA_enum translation; ///< in-place or out-of-place PLASMA_TRANSLATION_MODE
 } plasma_context_t;
 

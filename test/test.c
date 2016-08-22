@@ -43,9 +43,6 @@ int main(int argc, char **argv)
 
     const char *routine = argv[1];
 
-    // Ensure that ParamUsage has an entry for every param_label_t value.
-    assert(PARAM_SIZEOF == sizeof(ParamUsage)/(2*sizeof(char*)));
-
     param_t param[PARAM_SIZEOF];      // set of parameters
     param_value_t pval[PARAM_SIZEOF]; // snapshot of values
 
@@ -238,7 +235,16 @@ void time_routine(const char *name, param_value_t pval[])
  ******************************************************************************/
 void run_routine(const char *name, param_value_t pval[], char *info)
 {
-    if      (strcmp(name, "zgemm") == 0)
+    if      (strcmp(name, "zgels") == 0)
+        test_zgels(pval, info);
+    else if (strcmp(name, "dgels") == 0)
+        test_dgels(pval, info);
+    else if (strcmp(name, "cgels") == 0)
+        test_cgels(pval, info);
+    else if (strcmp(name, "sgels") == 0)
+        test_sgels(pval, info);
+
+    else if (strcmp(name, "zgemm") == 0)
         test_zgemm(pval, info);
     else if (strcmp(name, "dgemm") == 0)
         test_dgemm(pval, info);
@@ -247,56 +253,42 @@ void run_routine(const char *name, param_value_t pval[], char *info)
     else if (strcmp(name, "sgemm") == 0)
         test_sgemm(pval, info);
 
-    else if (strcmp(name, "zhemm") == 0)
-        test_zher2k(pval, info);
-    else if (strcmp(name, "chemm") == 0)
-        test_cher2k(pval, info);
+    else if (strcmp(name, "zgeqrf") == 0)
+        test_zgeqrf(pval, info);
+    else if (strcmp(name, "dgeqrf") == 0)
+        test_dgeqrf(pval, info);
+    else if (strcmp(name, "cgeqrf") == 0)
+        test_cgeqrf(pval, info);
+    else if (strcmp(name, "sgeqrf") == 0)
+        test_sgeqrf(pval, info);
 
-    else if (strcmp(name, "zher2k") == 0)
-        test_zher2k(pval, info);
-    else if (strcmp(name, "cher2k") == 0)
-        test_cher2k(pval, info);
+    else if (strcmp(name, "zgeqrs") == 0)
+        test_zgeqrs(pval, info);
+    else if (strcmp(name, "dgeqrs") == 0)
+        test_dgeqrs(pval, info);
+    else if (strcmp(name, "cgeqrs") == 0)
+        test_cgeqrs(pval, info);
+    else if (strcmp(name, "sgeqrs") == 0)
+        test_sgeqrs(pval, info);
 
     else if (strcmp(name, "zherk") == 0)
         test_zherk(pval, info);
     else if (strcmp(name, "cherk") == 0)
         test_cherk(pval, info);
 
-    else if (strcmp(name, "zposv") == 0)
-        test_zposv(pval, info);
-    else if (strcmp(name, "dposv") == 0)
-        test_dposv(pval, info);
-    else if (strcmp(name, "cposv") == 0)
-        test_cposv(pval, info);
-    else if (strcmp(name, "sposv") == 0)
-        test_sposv(pval, info);
+    else if (strcmp(name, "zsyrk") == 0)
+        test_zsyrk(pval, info);
+    else if (strcmp(name, "dsyrk") == 0)
+        test_dsyrk(pval, info);
+    else if (strcmp(name, "csyrk") == 0)
+        test_csyrk(pval, info);
+    else if (strcmp(name, "ssyrk") == 0)
+        test_ssyrk(pval, info);
 
-    else if (strcmp(name, "zpotrf") == 0)
-        test_zpotrf(pval, info);
-    else if (strcmp(name, "dpotrf") == 0)
-        test_dpotrf(pval, info);
-    else if (strcmp(name, "cpotrf") == 0)
-        test_cpotrf(pval, info);
-    else if (strcmp(name, "spotrf") == 0)
-        test_spotrf(pval, info);
-
-    else if (strcmp(name, "zpotrs") == 0)
-        test_zpotrs(pval, info);
-    else if (strcmp(name, "dpotrs") == 0)
-        test_dpotrs(pval, info);
-    else if (strcmp(name, "cpotrs") == 0)
-        test_cpotrs(pval, info);
-    else if (strcmp(name, "spotrs") == 0)
-        test_spotrs(pval, info);
-
-    else if (strcmp(name, "zsymm") == 0)
-        test_zsyr2k(pval, info);
-    else if (strcmp(name, "dsymm") == 0)
-        test_dsyr2k(pval, info);
-    else if (strcmp(name, "csymm") == 0)
-        test_csyr2k(pval, info);
-    else if (strcmp(name, "ssymm") == 0)
-        test_ssyr2k(pval, info);
+    else if (strcmp(name, "zher2k") == 0)
+        test_zher2k(pval, info);
+    else if (strcmp(name, "cher2k") == 0)
+        test_cher2k(pval, info);
 
     else if (strcmp(name, "zsyr2k") == 0)
         test_zsyr2k(pval, info);
@@ -307,14 +299,14 @@ void run_routine(const char *name, param_value_t pval[], char *info)
     else if (strcmp(name, "ssyr2k") == 0)
         test_ssyr2k(pval, info);
 
-    else if (strcmp(name, "zsyrk") == 0)
-        test_zsyrk(pval, info);
-    else if (strcmp(name, "dsyrk") == 0)
-        test_dsyrk(pval, info);
-    else if (strcmp(name, "csyrk") == 0)
-        test_csyrk(pval, info);
-    else if (strcmp(name, "ssyrk") == 0)
-        test_ssyrk(pval, info);
+    else if (strcmp(name, "zpotrf") == 0)
+        test_zpotrf(pval, info);
+    else if (strcmp(name, "dpotrf") == 0)
+        test_dpotrf(pval, info);
+    else if (strcmp(name, "cpotrf") == 0)
+        test_cpotrf(pval, info);
+    else if (strcmp(name, "spotrf") == 0)
+        test_spotrf(pval, info);
 
     else if (strcmp(name, "ztrsm") == 0)
         test_ztrsm(pval, info);
@@ -407,10 +399,10 @@ int param_read(int argc, char **argv, param_t param[])
             err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_M]);
         else if (param_starts_with(argv[i], "--n="))
             err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_N]);
-        else if (param_starts_with(argv[i], "--k="))
-            err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_K]);
         else if (param_starts_with(argv[i], "--nrhs="))
             err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_NRHS]);
+        else if (param_starts_with(argv[i], "--k="))
+            err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_K]);
 
         else if (param_starts_with(argv[i], "--nb="))
             err = param_scan_int(strchr(argv[i], '=')+1, &param[PARAM_NB]);
@@ -487,10 +479,10 @@ int param_read(int argc, char **argv, param_t param[])
         param_add_int(1000, &param[PARAM_M]);
     if (param[PARAM_N].num == 0)
         param_add_int(1000, &param[PARAM_N]);
-    if (param[PARAM_K].num == 0)
-        param_add_int(1000, &param[PARAM_K]);
     if (param[PARAM_NRHS].num == 0)
         param_add_int(1000, &param[PARAM_NRHS]);
+    if (param[PARAM_K].num == 0)
+        param_add_int(1000, &param[PARAM_K]);
 
     if (param[PARAM_NB].num == 0)
         param_add_int(256, &param[PARAM_NB]);
