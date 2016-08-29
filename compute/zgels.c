@@ -325,11 +325,6 @@ void PLASMA_zgels_Tile_Async(PLASMA_enum trans, PLASMA_desc *descA,
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
-    if (descA->nb != descA->mb || descB->nb != descB->mb) {
-        plasma_error("only square tiles supported");
-        plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
-        return;
-    }
 
     // Check sequence status.
     if (sequence->status != PLASMA_SUCCESS) {
@@ -391,6 +386,4 @@ void PLASMA_zgels_Tile_Async(PLASMA_enum trans, PLASMA_desc *descA,
                        *descA, *descB, *descT,
                        sequence, request);
     }
-
-    return;
 }
