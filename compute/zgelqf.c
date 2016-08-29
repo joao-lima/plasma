@@ -19,40 +19,36 @@
 
 /***************************************************************************//**
  *
- * @ingroup plasma_ungqr
+ * @ingroup plasma_gelqf
  *
- *  Generates an m-by-n matrix Q with orthonormal columns, which
- *  is defined as the first n columns of a product of the elementary reflectors
- *  returned by PLASMA_zgeqrf.
+ *  Computes tile LQ factorization of a complex m-by-n matrix A.
+ *  The factorization has the form
+ *    \f[ A = L \times Q \f],
+ *  where L is a lower trapezoidal with positive diagonal and Q is a matrix with
+ *  orthonormal rows.
  *
  *******************************************************************************
  *
  * @param[in] m
- *          The number of rows of the matrix Q. m >= 0.
+ *          The number of rows of the matrix A. m >= 0.
  *
  * @param[in] n
- *          The number of columns of the matrix Q. m >= n >= 0.
+ *          The number of columns of the matrix A. n >= 0.
  *
- * @param[in] k
- *          The number of columns of elementary tile reflectors whose product
- *          defines the matrix Q.
- *          n >= k >= 0.
- *
- * @param[in] A
- *          Details of the QR factorization of the original matrix A as returned
- *          by PLASMA_zgeqrf, where the k first columns are the reflectors.
+ * @param[in,out] A
+ *          On entry, the m-by-n matrix A.
+ *          On exit, the elements on and below the diagonal of the array
+ *          contain the m-by-min(m,n) lower trapezoidal matrix L (L is lower
+ *          triangular if M <= N); the elements above the diagonal represent
+ *          the unitary matrix Q as a product of elementary reflectors, stored
+ *          by tiles.
  *
  * @param[in] lda
  *          The leading dimension of the array A. lda >= max(1,m).
  *
- * @param[in] descT
- *          Auxiliary factorization data, computed by PLASMA_zgeqrf.
- *
- * @param[out] Q
- *          On exit, the m-by-n matrix Q.
- *
- * @param[in] ldq
- *          The leading dimension of the array Q. ldq >= max(1,m).
+ * @param[out] descT
+ *          On exit, auxiliary factorization data, required by PLASMA_zgelqs
+ *          to solve the system of equations.
  *
  *******************************************************************************
  *
@@ -61,26 +57,21 @@
  *
  *******************************************************************************
  *
- * @sa PLASMA_zungqr_Tile_Async
- * @sa PLASMA_cungqr
- * @sa PLASMA_dorgqr
- * @sa PLASMA_sorgqr
- * @sa PLASMA_zgeqrf
+ * @sa PLASMA_zgelqf_Tile_Async
+ * @sa PLASMA_cgelqf
+ * @sa PLASMA_dgelqf
+ * @sa PLASMA_sgelqf
+ * @sa PLASMA_zgelqs
  *
  ******************************************************************************/
-int PLASMA_zungqr(int m, int n, int k,
+int PLASMA_zgelqf(int m, int n,
                   PLASMA_Complex64_t *A, int lda,
-                  PLASMA_desc *descT,
-                  PLASMA_Complex64_t *Q, int ldq)
+                  PLASMA_desc *descT)
 {
     int nb;
     int retval;
     int status;
 
-    PLASMA_desc descA;
-    PLASMA_desc descQ;
-
-    // Get PLASMA context.
     plasma_context_t *plasma = plasma_context_self();
     if (plasma == NULL) {
         plasma_fatal_error("PLASMA not initialized");
@@ -92,50 +83,37 @@ int PLASMA_zungqr(int m, int n, int k,
         plasma_error("illegal value of m");
         return -1;
     }
-    if (n < 0 || n > m) {
+    if (n < 0) {
         plasma_error("illegal value of n");
         return -2;
     }
-    if (k < 0 || k > n) {
-        plasma_error("illegal value of k");
-        return -3;
-    }
     if (lda < imax(1, m)) {
         plasma_error("illegal value of lda");
-        return -5;
+        return -4;
     }
-    if (ldq < imax(1, m)) {
-        plasma_error("illegal value of ldq");
-        return -8;
-    }
-    if (imin(m, imin(n, k)) == 0)
+
+    // Quick return
+    if (imin(m, n) == 0)
         return PLASMA_SUCCESS;
 
-    // Tune NB & IB depending on M & N; Set NB
+    // Tune NB & IB depending on M, N & NRHS; Set NBNBSIZE
     //status = plasma_tune(PLASMA_FUNC_ZGELS, M, N, 0);
     //if (status != PLASMA_SUCCESS) {
-    //    plasma_error("PLASMA_zungqr", "plasma_tune() failed");
+    //    plasma_error("PLASMA_zgelqf", "plasma_tune() failed");
     //    return status;
     //}
+
     nb = plasma->nb;
 
-    // Initialize tile matrix descriptors.
+    // Initialize tile matrix descriptor.
+    PLASMA_desc descA;
     descA = plasma_desc_init(PlasmaComplexDouble, nb, nb,
-                             nb*nb, lda, n, 0, 0, m, k);
-
-    descQ = plasma_desc_init(PlasmaComplexDouble, nb, nb,
-                             nb*nb, ldq, n, 0, 0, m, n);
+                             nb*nb, m, n, 0, 0, m, n);
 
     // Allocate matrices in tile layout.
     retval = plasma_desc_mat_alloc(&descA);
     if (retval != PLASMA_SUCCESS) {
         plasma_error("plasma_desc_mat_alloc() failed");
-        return retval;
-    }
-    retval = plasma_desc_mat_alloc(&descQ);
-    if (retval != PLASMA_SUCCESS) {
-        plasma_error("plasma_desc_mat_alloc() failed");
-        plasma_desc_mat_free(&descA);
         return retval;
     }
 
@@ -146,28 +124,35 @@ int PLASMA_zungqr(int m, int n, int k,
         plasma_error("plasma_sequence_create() failed");
         return retval;
     }
+
     // Initialize request.
     PLASMA_request request = PLASMA_REQUEST_INITIALIZER;
 
-    // asynchronous block
     #pragma omp parallel
     #pragma omp master
     {
+        // The Async functions are submitted here.  If an error occurs
+        // (at submission time or at run time) the sequence->status
+        // will be marked with an error.  After an error, the next
+        // Async will not _insert_ more tasks into the runtime.  The
+        // sequence->status can be checked after each call to _Async
+        // or at the end of the parallel region.
+
         // Translate to tile layout.
         PLASMA_zcm2ccrb_Async(A, lda, &descA, sequence, &request);
-        PLASMA_zcm2ccrb_Async(Q, ldq, &descQ, sequence, &request);
 
         // Call the tile async function.
-        PLASMA_zungqr_Tile_Async(&descA, descT, &descQ, sequence, &request);
+        if (sequence->status == PLASMA_SUCCESS) {
+            PLASMA_zgelqf_Tile_Async(&descA, descT, sequence, &request);
+        }
 
-        // Translate Q back to LAPACK layout.
-        PLASMA_zccrb2cm_Async(&descQ, Q, ldq, sequence, &request);
-    }
-    // implicit synchronization
+        // Translate back to LAPACK layout.
+        if (sequence->status == PLASMA_SUCCESS)
+            PLASMA_zccrb2cm_Async(&descA, A, lda, sequence, &request);
+    } // pragma omp parallel block closed
 
-    // Free matrices in tile layout.
+    // Free matrix A in tile layout.
     plasma_desc_mat_free(&descA);
-    plasma_desc_mat_free(&descQ);
 
     // Return status.
     status = sequence->status;
@@ -177,24 +162,23 @@ int PLASMA_zungqr(int m, int n, int k,
 
 /***************************************************************************//**
  *
- * @ingroup plasma_ungqr
+ * @ingroup plasma_gelqf
  *
- *  Non-blocking tile version of PLASMA_zungqr().
+ *  Computes the tile LQ factorization of a matrix.
+ *  Non-blocking tile version of PLASMA_zgelqf().
  *  May return before the computation is finished.
  *  Allows for pipelining of operations at runtime.
  *
  *******************************************************************************
  *
- * @param[in] descA
+ * @param[in,out] descA
  *          Descriptor of matrix A.
  *          A is stored in the tile layout.
  *
- * @param[in] descT
- *          Descriptor of matrix T.
- *          Auxiliary factorization data, computed by PLASMA_zgeqrf.
- *
- * @param[out] descQ
- *          Descriptor of matrix Q. On exit, matrix Q stored in the tile layout.
+ * @param[out] descT
+ *          Descriptor of matrix descT.
+ *          On exit, auxiliary factorization data, required by PLASMA_zgelqs to
+ *          solve the system of equations.
  *
  * @param[in] sequence
  *          Identifies the sequence of function calls that this call belongs to
@@ -212,15 +196,14 @@ int PLASMA_zungqr(int m, int n, int k,
  *
  *******************************************************************************
  *
- * @sa PLASMA_zungqr
- * @sa PLASMA_cungqr_Tile_Async
- * @sa PLASMA_dorgqr_Tile_Async
- * @sa PLASMA_sorgqr_Tile_Async
- * @sa PLASMA_zgeqrf_Tile_Async
+ * @sa PLASMA_zgelqf
+ * @sa PLASMA_cgelqf_Tile_Async
+ * @sa PLASMA_dgelqf_Tile_Async
+ * @sa PLASMA_sgelqf_Tile_Async
+ * @sa PLASMA_zgelqs_Tile_Async
  *
  ******************************************************************************/
-void PLASMA_zungqr_Tile_Async(PLASMA_desc *descA, PLASMA_desc *descT,
-                              PLASMA_desc *descQ,
+void PLASMA_zgelqf_Tile_Async(PLASMA_desc *descA, PLASMA_desc *descT,
                               PLASMA_sequence *sequence,
                               PLASMA_request *request)
 {
@@ -232,49 +215,45 @@ void PLASMA_zungqr_Tile_Async(PLASMA_desc *descA, PLASMA_desc *descT,
         return;
     }
 
-    // Check input arguments
+    // Check input arguments.
     if (plasma_desc_check(descA) != PLASMA_SUCCESS) {
-        plasma_error("invalid descriptor A");
+        plasma_error("invalid A");
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
     if (plasma_desc_check(descT) != PLASMA_SUCCESS) {
-        plasma_error("invalid descriptor T");
-        plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
-        return;
-    }
-    if (plasma_desc_check(descQ) != PLASMA_SUCCESS) {
-        plasma_error("invalid descriptor Q");
+        plasma_error("invalid T");
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
     if (sequence == NULL) {
-        plasma_error("NULL sequence");
+        plasma_fatal_error("NULL sequence");
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
     if (request == NULL) {
-        plasma_error("NULL request");
+        plasma_fatal_error("NULL request");
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
-    if (descA->nb != descA->mb || descQ->nb != descQ->mb) {
+    if (descA->nb != descA->mb) {
         plasma_error("only square tiles supported");
         plasma_request_fail(sequence, request, PLASMA_ERR_ILLEGAL_VALUE);
         return;
     }
 
-    // quick return
-    //if (n <= 0)
-    //    return;
+    // Check sequence status.
+    if (sequence->status != PLASMA_SUCCESS) {
+        plasma_request_fail(sequence, request, PLASMA_ERR_SEQUENCE_FLUSHED);
+        return;
+    }
 
-    // set ones to diagonal of Q
-    plasma_pzlaset(PlasmaFull,
-                   (PLASMA_Complex64_t)0.0, (PLASMA_Complex64_t)1.0, *descQ,
-                   sequence, request);
+    // Quick return
+    //if (imin(m, n) == 0)
+    //    return PLASMA_SUCCESS;
 
-    // construct Q
-    plasma_pzungqr(*descA, *descQ, *descT, sequence, request);
+    // Call the parallel function.
+    plasma_pzgelqf(*descA, *descT, sequence, request);
 
     return;
 }
