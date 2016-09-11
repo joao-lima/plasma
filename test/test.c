@@ -577,7 +577,7 @@ int param_read(int argc, char **argv, param_t param[])
     }
     if (param[PARAM_BETA].num == 0) {
         PLASMA_Complex64_t z = 6.7890 + 7.8901*_Complex_I;
-        param_add_double(z, &param[PARAM_BETA]);
+        param_add_complex(z, &param[PARAM_BETA]);
     }
 
     return iter;
@@ -724,8 +724,8 @@ int param_scan_double(const char *str, param_t *param)
 
 /***************************************************************************//**
  *
- * @brief Scans a list of complex numbers in format: 1.23 or 1.23+2.45i. (No ranges.)
- *        Adds the value(s) to a parameter iterator.
+ * @brief Scans a list of complex numbers in format: 1.23 or 1.23+2.45i.
+ *        Adds the value to a parameter iterator. No ranges.
  *
  * @param[in]    str   - string containing a double precision number
  * @param[inout] param - parameter iterator
