@@ -1,0 +1,69 @@
+/**
+ *
+ * @file
+ *
+ *  PLASMA is a software package provided by:
+ *  University of Tennessee, US,
+ *  University of Manchester, UK.
+ *
+ * @precisions normal z -> s d c
+ *
+ **/
+
+#include "plasma_async.h"
+#include "plasma_descriptor.h"
+#include "plasma_types.h"
+#include "plasma_internal.h"
+#include "core_blas_z.h"
+
+#define A(m, n) ((PLASMA_Complex64_t*)plasma_getaddr(A, m, n))
+/***************************************************************************//**
+ *  Initializes the matrix A to beta on the diagonal and alpha on the
+ *  offdiagonals. Applies alpha correctly for any shape of the submatrix
+ *  described by A, but applies beta correctly on for submatrices aligned
+ *  with the diagonal of the main matrix (A.i = A.j).
+ **/
+void plasma_pzlaset(PLASMA_enum uplo,
+                    PLASMA_Complex64_t alpha, PLASMA_Complex64_t beta,
+                    PLASMA_desc A,
+                    PLASMA_sequence *sequence, PLASMA_request *request)
+{
+    int i, j;
+    int m, n;
+
+    for (i = 0; i < A.mt; i++) {
+        if (i == 0 && i == A.mt-1)
+            m = A.m;
+        else if (i == 0)
+            m = A.mb-A.i%A.mb;
+        else if (i == A.mt-1)
+            m = (A.i+A.m+A.mb-1)%A.mb+1;
+        else
+            m = A.mb;
+
+        for (j = 0; j < A.nt; j++) {
+            if (j == 0 && j == A.nt-1)
+                n = A.n;
+            else if (j == 0)
+                n = A.nb-A.j%A.nb;
+            else if (j == A.nt-1)
+                n = (A.j+A.n+A.nb-1)%A.nb+1;
+            else
+                n = A.nb;
+
+            if (uplo == PlasmaFull ||
+                (uplo == PlasmaLower && i >= j) ||
+                (uplo == PlasmaUpper && i <= j))
+                CORE_OMP_zlaset(i == j ? uplo : PlasmaFull,
+                                A.i/A.mb+i == A.lm1 ? A.lm-A.lm1*A.mb : A.mb,
+                                A.j/A.nb+j == A.ln1 ? A.ln-A.ln1*A.nb : A.nb,
+                                i == 0 ? A.i%A.mb : 0,
+                                j == 0 ? A.j%A.nb : 0,
+                                m,
+                                n,
+                                alpha,
+                                i != j ? alpha : beta,
+                                A(i, j));
+        }
+    }
+}
