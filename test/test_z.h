@@ -37,5 +37,6 @@ void test_zsyrk(param_value_t param[], char *info);
 void test_ztradd(param_value_t param[], char *info);
 void test_ztrmm(param_value_t param[], char *info);
 void test_ztrsm(param_value_t param[], char *info);
+void test_zcposv(param_value_t param[], char *info);
 
 #endif // TEST_Z_H
