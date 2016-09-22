@@ -32,8 +32,11 @@ void plasma_pzgelqf(plasma_desc_t A, plasma_desc_t T,
     int ldak, ldam;
     int tempkm, tempkn, tempmm, tempnn;
 
-    if (sequence->status != PlasmaSuccess)
+    // Check sequence status.
+    if (sequence->status != PlasmaSuccess) {
+        plasma_request_fail(sequence, request, PlasmaErrorSequence);
         return;
+    }
 
     // Set inner blocking from the T tile row-dimension.
     int ib = T.mb;

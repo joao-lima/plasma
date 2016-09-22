@@ -34,8 +34,11 @@ void plasma_pzunglq(plasma_desc_t A, plasma_desc_t Q, plasma_desc_t T,
     int tempAkm, tempAkn;
     int minmnt;
 
-    if (sequence->status != PlasmaSuccess)
+    // Check sequence status.
+    if (sequence->status != PlasmaSuccess) {
+        plasma_request_fail(sequence, request, PlasmaErrorSequence);
         return;
+    }
 
     // Set inner blocking from the T tile row-dimension.
     int ib = T.mb;
