@@ -33,7 +33,7 @@
  *    \f[ op( X ) = X^H, \f]
  *
  *  alpha and beta are scalars and A, B are matrices with op( A ) an m-by-n or
- *  n-by-m matrix depending on the value of transA and B an m-by-n matrix.
+ *  n-by-m matrix depending on the value of transa and B an m-by-n matrix.
  *
  *******************************************************************************
  *
@@ -43,7 +43,7 @@
  *          - PlasmaUpper:   op( A ) and B are upper trapezoidal matrices.
  *          - PlasmaLower:   op( A ) and B are lower trapezoidal matrices.
  *
- * @param[in] transA
+ * @param[in] transa
  *          Specifies whether the matrix A is non-transposed, transposed, or
  *          conjugate transposed
  *          - PlasmaNoTrans:   op( A ) = A
@@ -62,12 +62,12 @@
  *          Scalar factor of A.
  *
  * @param[in] A
- *          Matrix of size lda-by-k, where k is n when transA == PlasmaNoTrans
+ *          Matrix of size lda-by-k, where k is n when transa == PlasmaNoTrans
  *          and m otherwise.
  *
  * @param[in] lda
  *          Leading dimension of the array A. lda >= max(1,l), where l is m
- *          when transA = PlasmaNoTrans and n otherwise.
+ *          when transa = PlasmaNoTrans and n otherwise.
  *
  * @param[in] beta
  *          Scalar factor of B.
@@ -97,6 +97,8 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
                   plasma_complex64_t alpha, plasma_complex64_t *pA, int lda,
                   plasma_complex64_t beta,  plasma_complex64_t *pB, int ldb)
 {
+    printf("[%d]: Calling plasma_ztradd()...\n", omp_get_thread_num());
+
     // Get PLASMA context
     plasma_context_t *plasma = plasma_context_self();
     if (plasma == NULL) {
@@ -111,10 +113,10 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         plasma_error("illegal value of uplo");
         return -1;
     }
-    if ((transA != PlasmaNoTrans) &&
-        (transA != PlasmaTrans)   &&
-        (transA != PlasmaConjTrans)) {
-        plasma_error("illegal value of transA");
+    if ((transa != PlasmaNoTrans) &&
+        (transa != PlasmaTrans)   &&
+        (transa != PlasmaConjTrans)) {
+        plasma_error("illegal value of transa");
         return -2;
     }
     if (m < 0) {
@@ -131,7 +133,7 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
     }
 
     int am, an;
-    if (transA == PlasmaNoTrans) {
+    if (transa == PlasmaNoTrans) {
         am = m;
         an = n;
     }
@@ -201,9 +203,9 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
 
         // Call tile async function
         if (sequence->status == PlasmaSuccess) {
-            plasma_omp_ztradd(uplo,   transA,
-                              alpha, &descA,
-                              beta,  &descB,
+            plasma_omp_ztradd(uplo, transa,
+                              alpha,     A,
+                              beta,      B,
                               sequence, &request);
         }
 
@@ -241,7 +243,7 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
  *          - PlasmaUpper:   op( A ) and B are upper trapezoidal matrices.
  *          - PlasmaLower:   op( A ) and B are lower trapezoidal matrices.
  *
- * @param[in] transA
+ * @param[in] transa
  *          Specifies whether the matrix A is non-transposed, transposed, or
  *          conjugate transposed
  *          - PlasmaNoTrans:   op( A ) = A
@@ -288,6 +290,8 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
                        plasma_complex64_t beta,  plasma_desc_t B,
                        plasma_sequence_t *sequence, plasma_request_t  *request)
 {
+    printf("[%d]: Calling plasma_omp_ztradd()...\n", omp_get_thread_num());
+
     // Get PLASMA context
     plasma_context_t *plasma = plasma_context_self();
     if (plasma == NULL) {
@@ -304,10 +308,10 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         plasma_request_fail(sequence, request, PlasmaErrorIllegalValue);
         return;
     }
-    if ((transA != PlasmaNoTrans) &&
-        (transA != PlasmaTrans)   &&
-        (transA != PlasmaConjTrans)) {
-        plasma_error("illegal value of transA");
+    if ((transa != PlasmaNoTrans) &&
+        (transa != PlasmaTrans)   &&
+        (transa != PlasmaConjTrans)) {
+        plasma_error("illegal value of transa");
         plasma_request_fail(sequence, request, PlasmaErrorIllegalValue);
         return;
     }
@@ -338,7 +342,7 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         return;
 
     // Call parallel function
-    plasma_pztradd(uplo,  transA,
+    plasma_pztradd(uplo,  transa,
                    alpha, A,
                    beta,  B,
                    sequence, request);
