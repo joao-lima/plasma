@@ -76,8 +76,8 @@ struct routines_t routines[] =
     { "cherk", test_cherk },
     { "", NULL },
 
-    { "zlacpy", test_zlacpy },
-    { "dlacpy", test_dlacpy },
+	{ "zlacpy", test_zlacpy },
+	{ "dlacpy", test_dlacpy },
     { "clacpy", test_clacpy },
     { "slacpy", test_slacpy },
 
@@ -85,6 +85,11 @@ struct routines_t routines[] =
     { "dlag2s", test_dlag2s },
     { "clag2z", test_clag2z },
     { "slag2d", test_slag2d },
+
+	{ "zlauum", test_zlauum },
+	{ "dlauum", test_dlauum },
+	{ "clauum", test_clauum },
+	{ "slauum", test_slauum },
 
     { "zpbsv", test_zpbsv },
     { "dpbsv", test_dpbsv },
@@ -105,6 +110,11 @@ struct routines_t routines[] =
     { "dpotrf", test_dpotrf },
     { "cpotrf", test_cpotrf },
     { "spotrf", test_spotrf },
+
+    { "zpotri", test_zpotri },
+    { "dpotri", test_dpotri },
+    { "cpotri", test_cpotri },
+    { "spotri", test_spotri },
 
     { "zpotrs", test_zpotrf },
     { "dpotrs", test_dpotrf },
@@ -140,6 +150,11 @@ struct routines_t routines[] =
     { "dtrsm", test_dtrsm },
     { "ctrsm", test_ctrsm },
     { "strsm", test_strsm },
+
+	{ "ztrtri", test_ztrtri },
+	{ "dtrtri", test_dtrtri },
+	{ "ctrtri", test_ctrtri },
+	{ "strtri", test_strtri },
 
     { NULL, NULL }  // last entry
 };
@@ -185,6 +200,7 @@ int main(int argc, char **argv)
     test_routine(test, routine, NULL);
 
     plasma_init();
+
     if (outer) {
         // outer product iteration
         do {
