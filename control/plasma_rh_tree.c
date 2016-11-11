@@ -17,6 +17,35 @@ void plasma_rh_tree_plasmatree(int mt, int nt,
 void plasma_rh_tree_flat(int mt, int nt,
                          int **operations, int *noperations);
 
+/***************************************************************************//**
+ *  Routine for registering a kernel into the list of operations for tile
+ *  QR and LQ factorization.
+ * @see plasma_omp_zgeqrf
+ **/
+void plasma_rh_tree_operation_insert(int *operations, int iops,
+                                     plasma_enum_t kernel,
+                                     int col, int row, int rowpiv)
+{
+    operations[iops*4]   = kernel;
+    operations[iops*4+1] = col;
+    operations[iops*4+2] = row;
+    operations[iops*4+3] = rowpiv;
+}
+
+/***************************************************************************//**
+ *  Routine for getting a kernel from the list of operations for tile
+ *  QR and LQ factorization.
+ * @see plasma_omp_zgeqrf
+ **/
+void plasma_rh_tree_operation_get(int *operations, int iops,
+                                  plasma_enum_t *kernel, 
+                                  int *col, int *row, int *rowpiv)
+{
+    *kernel = operations[iops*4];
+    *col    = operations[iops*4+1];
+    *row    = operations[iops*4+2];
+    *rowpiv = operations[iops*4+3];
+}
 
 /***************************************************************************//**
  *  Routine for precomputing a given order of operations for tile 
@@ -29,14 +58,14 @@ void plasma_rh_tree_operations(int mt, int nt,
     // Different algorithms can be implemented and switched here:
     
     // Flat tree as in the standard geqrf routine.
-    // Combines only GE and TS kernels.
-    plasma_rh_tree_flat(mt, nt, operations, noperations);
+    // Combines only GE and TS kernels. Included mainly for debugging.
+    //plasma_rh_tree_flat(mt, nt, operations, noperations);
     
     // PLASMA-Tree from PLASMA 2.8.0
     //plasma_rh_tree_plasmatree(mt, nt, operations, noperations);
 
     // Pure Greedy algorithm combining only GE and TT kernels.
-    //plasma_rh_tree_greedy(mt, nt, operations, noperations);
+    plasma_rh_tree_greedy(mt, nt, operations, noperations);
 }
 
 
