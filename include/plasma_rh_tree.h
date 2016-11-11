@@ -17,25 +17,13 @@ enum {
 };
 
 
-inline void plasma_rh_tree_operation_insert(int *operations, int iops,
-                                            plasma_enum_t kernel,
-                                            int col, int row, int rowpiv)
-{
-    operations[iops*4]   = kernel;
-    operations[iops*4+1] = col;
-    operations[iops*4+2] = row;
-    operations[iops*4+3] = rowpiv;
-}
+void plasma_rh_tree_operation_insert(int *operations, int iops,
+                                     plasma_enum_t kernel,
+                                     int col, int row, int rowpiv);
 
-inline void plasma_rh_tree_operation_get(int *operations, int iops,
-                                         plasma_enum_t *kernel, 
-                                         int *col, int *row, int *rowpiv)
-{
-    *kernel = operations[iops*4];
-    *col    = operations[iops*4+1];
-    *row    = operations[iops*4+2];
-    *rowpiv = operations[iops*4+3];
-}
+void plasma_rh_tree_operation_get(int *operations, int iops,
+                                  plasma_enum_t *kernel, 
+                                  int *col, int *row, int *rowpiv);
 
 void plasma_rh_tree_operations(int mt, int nt, int **operations, int *noperations);
 
