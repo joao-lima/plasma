@@ -36,18 +36,18 @@
  * @param[in] nrhs
  *          The number of columns of B. nrhs >= 0.
  *
- * @param[in] A
+ * @param[in] pA
  *          Details of the QR factorization of the original matrix A as returned
  *          by plasma_zgeqrf.
  *
  * @param[in] lda
  *          The leading dimension of the array A. lda >= m.
  *
- * @param[in] descT
+ * @param[in] T
  *          Auxiliary factorization data, computed by plasma_zgeqrf.
  *
- * @param[in,out] B
- *          On entry, the m-by-nrhs right hand side matrix B.
+ * @param[in,out] pB
+ *          On entry, pointer to the m-by-nrhs right hand side matrix B.
  *          On exit, the n-by-nrhs solution matrix X.
  *
  * @param[in] ldb
@@ -274,7 +274,7 @@ void plasma_omp_zgeqrs(plasma_desc_t A, plasma_desc_t T,
 
     // Find Y = Q^H * B.
     plasma_pzunmqr(PlasmaLeft, Plasma_ConjTrans,
-                   A, B, T, work,
+                   A, T, B, work,
                    sequence, request);
 
     // Solve R * X = Y.

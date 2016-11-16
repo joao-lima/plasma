@@ -38,7 +38,7 @@
  *    \f]
  *  where \f$ tau \f$ is a scalar, and \f$ v \f$ is a vector with
  *  v(1:i-1) = 0 and v(i) = 1; v(i+1:n)^H is stored on exit in A(i,i+1:n),
- *  and \f$ tau \f$ in TAU(i).
+ *  and \f$ tau \f$ in tau(i).
  *
  *******************************************************************************
  *
@@ -56,28 +56,28 @@
  *         On exit, the elements on and below the diagonal of the array
  *         contain the m-by-min(m,n) lower trapezoidal tile L (L is
  *         lower triangular if m <= n); the elements above the diagonal,
- *         with the array TAU, represent the unitary tile Q as a
+ *         with the array tau, represent the unitary tile Q as a
  *         product of elementary reflectors (see Further Details).
  *
  * @param[in] lda
  *         The leading dimension of the array A.  lda >= max(1,m).
  *
  * @param[out] T
- *         The ib-by-n triangular factor T of the block reflector.
+ *         The ib-by-m triangular factor T of the block reflector.
  *         T is upper triangular by block (economic storage);
  *         The rest of the array is not referenced.
  *
  * @param[in] ldt
  *         The leading dimension of the array T. ldt >= ib.
  *
- * @param TAU
+ * @param tau
  *         Auxiliarry workspace array of length m.
  *
- * @param WORK
+ * @param work
  *         Auxiliary workspace array of length ib*m.
  *
  * @param[in] lwork
- *         Size of the array WORK. Should be at least ib*m.
+ *         Size of the array work. Should be at least ib*m.
  *
  *******************************************************************************
  *
@@ -88,8 +88,8 @@
 int core_zgelqt(int m, int n, int ib,
                 plasma_complex64_t *A, int lda,
                 plasma_complex64_t *T, int ldt,
-                plasma_complex64_t *TAU,
-                plasma_complex64_t *WORK)
+                plasma_complex64_t *tau,
+                plasma_complex64_t *work)
 {
     // Check input arguments.
     if (m < 0) {
@@ -120,12 +120,12 @@ int core_zgelqt(int m, int n, int ib,
         coreblas_error("illegal value of ldt");
         return -7;
     }
-    if (TAU == NULL) {
-        coreblas_error("NULL TAU");
+    if (tau == NULL) {
+        coreblas_error("NULL tau");
         return -8;
     }
-    if (WORK == NULL) {
-        coreblas_error("NULL WORK");
+    if (work == NULL) {
+        coreblas_error("NULL work");
         return -9;
     }
 
@@ -140,14 +140,14 @@ int core_zgelqt(int m, int n, int ib,
         LAPACKE_zgelq2_work(LAPACK_COL_MAJOR,
                             sb, n-i,
                             &A[lda*i+i], lda,
-                            &TAU[i], WORK);
+                            &tau[i], work);
 
         LAPACKE_zlarft_work(LAPACK_COL_MAJOR,
                             lapack_const(PlasmaForward),
                             lapack_const(PlasmaRowwise),
                             n-i, sb,
                             &A[lda*i+i], lda,
-                            &TAU[i],
+                            &tau[i],
                             &T[ldt*i], ldt);
 
         if (m > i+sb) {
@@ -160,7 +160,7 @@ int core_zgelqt(int m, int n, int ib,
                                 &A[lda*i+i],      lda,
                                 &T[ldt*i],        ldt,
                                 &A[lda*i+(i+sb)], lda,
-                                WORK, m-i-sb);
+                                work, m-i-sb);
         }
     }
 
@@ -176,20 +176,20 @@ void core_omp_zgelqt(int m, int n, int ib,
 {
     // TODO: double check depend dimensions
     #pragma omp task depend(inout:A[0:lda*n]) \
-                     depend(out:T[0:ib*n])
+                     depend(out:T[0:ib*m]) // T should be mxib, but is stored
+                                           // as ibxm
     {
         if (sequence->status == PlasmaSuccess) {
-
             // Prepare workspaces.
             int tid = omp_get_thread_num();
-            plasma_complex64_t *TAU = (plasma_complex64_t*)work.spaces[tid];
+            plasma_complex64_t *tau = (plasma_complex64_t*)work.spaces[tid];
 
             // Call the kernel.
             int info = core_zgelqt(m, n, ib,
                                    A, lda,
                                    T, ldt,
-                                   TAU,
-                                   TAU+m);
+                                   tau,
+                                   tau+m);
 
             if (info != PlasmaSuccess) {
                 plasma_error("core_zgelqt() failed");

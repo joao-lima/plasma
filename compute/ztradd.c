@@ -39,9 +39,8 @@
  *
  * @param[in] uplo
  *          Specifies the shape of op( A ) and B matrices:
- *          - PlasmaGeneral: op( A ) and B are general matrices.
- *          - PlasmaUpper:   op( A ) and B are upper trapezoidal matrices.
- *          - PlasmaLower:   op( A ) and B are lower trapezoidal matrices.
+ *          - PlasmaUpper: op( A ) and B are upper trapezoidal matrices.
+ *          - PlasmaLower: op( A ) and B are lower trapezoidal matrices.
  *
  * @param[in] transa
  *          Specifies whether the matrix A is non-transposed, transposed, or
@@ -97,22 +96,21 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
                   plasma_complex64_t alpha, plasma_complex64_t *pA, int lda,
                   plasma_complex64_t beta,  plasma_complex64_t *pB, int ldb)
 {
-    // Get PLASMA context.
+    // Get PLASMA context
     plasma_context_t *plasma = plasma_context_self();
     if (plasma == NULL) {
         plasma_error("PLASMA not initialized");
         return PlasmaErrorNotInitialized;
     }
 
-    // Check input arguments.
-    if ((uplo != PlasmaGeneral) &&
-        (uplo != PlasmaUpper) &&
+    // Check input arguments
+    if ((uplo != PlasmaUpper) &&
         (uplo != PlasmaLower)) {
         plasma_error("illegal value of uplo");
         return -1;
     }
     if ((transa != PlasmaNoTrans) &&
-        (transa != PlasmaTrans) &&
+        (transa != PlasmaTrans)   &&
         (transa != PlasmaConjTrans)) {
         plasma_error("illegal value of transa");
         return -2;
@@ -159,10 +157,10 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
     if (m == 0 || n == 0 || (alpha == 0.0 && beta == 1.0))
         return PlasmaSuccess;
 
-    // Set tiling parameters.
+    // Set tiling parameters
     int nb = plasma->nb;
 
-    // Create tile matrices.
+    // Create tile matrices
     plasma_desc_t A;
     plasma_desc_t B;
     int retval;
@@ -180,7 +178,7 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         return retval;
     }
 
-    // Create sequence.
+    // Create sequence
     plasma_sequence_t *sequence = NULL;
     retval = plasma_sequence_create(&sequence);
     if (retval != PlasmaSuccess) {
@@ -188,35 +186,34 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         return retval;
     }
 
-    // Initialize request.
+    // Initialize request
     plasma_request_t request = PlasmaRequestInitializer;
 
-    // asynchronous block
+    // Asynchronous block
     #pragma omp parallel
     #pragma omp master
     {
-        // Translate to tile layout.
+        // Translate to tile layout
         plasma_omp_zge2desc(pA, lda, A, sequence, &request);
         plasma_omp_zge2desc(pB, ldb, B, sequence, &request);
 
-        // Call tile async function.
-        if (sequence->status == PlasmaSuccess) {
-            plasma_omp_ztradd(uplo, transa,
-                              alpha, A,
-                              beta,  B,
-                              sequence, &request);
-        }
+        // Call tile async function
+        plasma_omp_ztradd(uplo, transa,
+                          alpha,     A,
+                          beta,      B,
+                          sequence, &request);
 
-        // Translate back to LAPACK layout.
+        // Translate back to LAPACK layout
+        plasma_omp_zdesc2ge(A, pA, lda, sequence, &request);
         plasma_omp_zdesc2ge(B, pB, ldb, sequence, &request);
     }
-    // implicit synchronization
+    // Implicit synchronization
 
-    // Free matrices in tile layout.
+    // Free matrices in tile layout
     plasma_desc_destroy(&A);
     plasma_desc_destroy(&B);
 
-    // Return status.
+    // Return status
     int status = sequence->status;
     plasma_sequence_destroy(sequence);
     return status;
@@ -237,9 +234,8 @@ int plasma_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
  *
  * @param[in] uplo
  *          Specifies the shape of op( A ) and B matrices:
- *          - PlasmaGeneral: op( A ) and B are general matrices.
- *          - PlasmaUpper:   op( A ) and B are upper trapezoidal matrices.
- *          - PlasmaLower:   op( A ) and B are lower trapezoidal matrices.
+ *          - PlasmaUpper: op( A ) and B are upper trapezoidal matrices.
+ *          - PlasmaLower: op( A ) and B are lower trapezoidal matrices.
  *
  * @param[in] transa
  *          Specifies whether the matrix A is non-transposed, transposed, or
@@ -288,7 +284,7 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
                        plasma_complex64_t beta,  plasma_desc_t B,
                        plasma_sequence_t *sequence, plasma_request_t  *request)
 {
-    // Get PLASMA context.
+    // Get PLASMA context
     plasma_context_t *plasma = plasma_context_self();
     if (plasma == NULL) {
         plasma_error("PLASMA not initialized");
@@ -296,16 +292,15 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         return;
     }
 
-    // Check input arguments.
-    if ((uplo != PlasmaGeneral) &&
-        (uplo != PlasmaUpper) &&
+    // Check input arguments
+    if ((uplo != PlasmaUpper) &&
         (uplo != PlasmaLower)) {
         plasma_error("illegal value of uplo");
         plasma_request_fail(sequence, request, PlasmaErrorIllegalValue);
         return;
     }
     if ((transa != PlasmaNoTrans) &&
-        (transa != PlasmaTrans) &&
+        (transa != PlasmaTrans)   &&
         (transa != PlasmaConjTrans)) {
         plasma_error("illegal value of transa");
         plasma_request_fail(sequence, request, PlasmaErrorIllegalValue);
@@ -332,13 +327,13 @@ void plasma_omp_ztradd(plasma_enum_t uplo, plasma_enum_t transa,
         return;
     }
 
-    // quick return
+    // Quick return
     int am = transa == PlasmaNoTrans ? A.m : A.n;
     if ((alpha == 0.0 || am == 0) && beta == 1.0)
         return;
 
-    // Call parallel function.
-    plasma_pztradd(uplo, transa,
+    // Call parallel function
+    plasma_pztradd(uplo,  transa,
                    alpha, A,
                    beta,  B,
                    sequence, request);
