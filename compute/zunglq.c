@@ -39,18 +39,18 @@
  *          defines the matrix Q.
  *          m >= k >= 0.
  *
- * @param[in] A
+ * @param[in] pA
  *          Details of the LQ factorization of the original matrix A as returned
  *          by plasma_zgelqf.
  *
  * @param[in] lda
  *          The leading dimension of the array A. lda >= max(1,m).
  *
- * @param[in] descT
+ * @param[in] T
  *          Auxiliary factorization data, computed by plasma_zgelqf.
  *
- * @param[out] Q
- *          On exit, the m-by-n matrix Q.
+ * @param[out] pQ
+ *          On exit, pointer to the m-by-n matrix Q.
  *
  * @param[in] ldq
  *          The leading dimension of the array Q. ldq >= max(1,m).
@@ -72,7 +72,7 @@
 int plasma_zunglq(int m, int n, int k,
                   plasma_complex64_t *pA, int lda,
                   plasma_desc_t T,
-                  plasma_complex64_t *Qf77, int ldq)
+                  plasma_complex64_t *pQ, int ldq)
 {
     // Get PLASMA context.
     plasma_context_t *plasma = plasma_context_self();
@@ -155,13 +155,13 @@ int plasma_zunglq(int m, int n, int k,
     {
         // Translate to tile layout.
         plasma_omp_zge2desc(pA, lda, A, sequence, &request);
-        plasma_omp_zge2desc(Qf77, ldq, Q, sequence, &request);
+        plasma_omp_zge2desc(pQ, ldq, Q, sequence, &request);
 
         // Call the tile async function.
         plasma_omp_zunglq(A, T, Q, work, sequence, &request);
 
         // Translate Q back to LAPACK layout.
-        plasma_omp_zdesc2ge(Q, Qf77, ldq, sequence, &request);
+        plasma_omp_zdesc2ge(Q, pQ, ldq, sequence, &request);
     }
     // implicit synchronization
 
@@ -273,5 +273,5 @@ void plasma_omp_zunglq(plasma_desc_t A, plasma_desc_t T, plasma_desc_t Q,
     plasma_pzlaset(PlasmaGeneral, 0.0, 1.0, Q, sequence, request);
 
     // Construct Q.
-    plasma_pzunglq(A, Q, T, work, sequence, request);
+    plasma_pzunglq(A, T, Q, work, sequence, request);
 }

@@ -133,12 +133,16 @@ static inline void *plasma_tile_addr_general_band(plasma_desc_t A, int m, int n)
 /******************************************************************************/
 static inline void *plasma_tile_addr(plasma_desc_t A, int m, int n)
 {
-    if (A.type == PlasmaGeneral)
+    if (A.type == PlasmaGeneral) {
         return plasma_tile_addr_general(A, m, n);
-    else if (A.type == PlasmaGeneralBand)
+    }
+    else if (A.type == PlasmaGeneralBand) {
         return plasma_tile_addr_general_band(A, m, n);
-    else
+    }
+    else {
         plasma_fatal_error("invalid matrix type");
+        return NULL;
+    }
 }
 
 /***************************************************************************//**
@@ -244,8 +248,7 @@ int plasma_desc_general_band_check(plasma_desc_t A);
 
 plasma_desc_t plasma_desc_view(plasma_desc_t A, int i, int j, int m, int n);
 
-int plasma_descT_create(plasma_enum_t precision, int m, int n,
-                        plasma_desc_t *A);
+int plasma_descT_create(plasma_desc_t A, int ib, plasma_desc_t *T);
 
 #ifdef __cplusplus
 }  // extern "C"

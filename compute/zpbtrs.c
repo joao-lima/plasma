@@ -123,23 +123,13 @@ int plasma_zpbtrs(plasma_enum_t uplo,
     // Set tiling parameters.
     int nb = plasma->nb;
 
-    // number of tiles in upper band (not including diagonal)
-    int tku  = (kd+kd+nb-1)/nb;
-
-    // number of tiles in lower band (not including diagonal)
-    int tkl  = (kd+nb-1)/nb;
-
-    // Since we use zgetrf on panel, we pivot back within panel.
-    // This could fill the last tile of the panel,
-    // and we need extra nb space on the bottom.
-    int ldab_desc = (tku+tkl+1)*nb;  
-
     // Initialize tile matrix descriptors.
+    int lm = nb*(1+(kd+nb-1)/nb);
     plasma_desc_t AB;
     plasma_desc_t B;
     int retval;
     retval = plasma_desc_general_band_create(PlasmaComplexDouble, uplo, nb, nb,
-                                             ldab_desc, n, 0, 0, n, n, kd, kd,
+                                             lm, n, 0, 0, n, n, kd, kd,
                                              &AB);
     if (retval != PlasmaSuccess) {
         plasma_error("plasma_desc_general_band_create() failed");

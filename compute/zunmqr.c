@@ -60,7 +60,7 @@
  *          If side == PlasmaLeft,  m >= k >= 0.
  *          If side == PlasmaRight, n >= k >= 0.
  *
- * @param[in] A
+ * @param[in] pA
  *          Details of the QR factorization of the original matrix A as returned
  *          by plasma_zgeqrf.
  *
@@ -69,11 +69,11 @@
  *          If side == PlasmaLeft,  lda >= max(1,m).
  *          If side == PlasmaRight, lda >= max(1,n).
  *
- * @param[in] descT
+ * @param[in] T
  *          Auxiliary factorization data, computed by plasma_zgeqrf.
  *
- * @param[in,out] C
- *          On entry, the m-by-n matrix C.
+ * @param[in,out] pC
+ *          On entry, pointer to the m-by-n matrix C.
  *          On exit, C is overwritten by Q*C, Q^H*C, C*Q, or C*Q^H.
  *
  * @param[in] ldc
@@ -125,14 +125,11 @@ int plasma_zunmqr(plasma_enum_t side, plasma_enum_t trans,
     }
 
     int am;
-    int an;
     if (side == PlasmaLeft) {
         am = m;
-        an = n;
     }
     else {
         am = n;
-        an = m;
     }
 
     if ((k < 0) || (k > am)) {
@@ -161,7 +158,7 @@ int plasma_zunmqr(plasma_enum_t side, plasma_enum_t trans,
     plasma_desc_t C;
     int retval;
     retval = plasma_desc_general_create(PlasmaComplexDouble, nb, nb,
-                                        am, an, 0, 0, am, k, &A);
+                                        am, k, 0, 0, am, k, &A);
     if (retval != PlasmaSuccess) {
         plasma_error("plasma_desc_general_create() failed");
         return retval;
@@ -341,6 +338,6 @@ void plasma_omp_zunmqr(plasma_enum_t side, plasma_enum_t trans,
 
     // Call the parallel function.
     plasma_pzunmqr(side, trans,
-                   A, C, T, work,
-                   sequence, request);
+                   A, T, C,
+                   work, sequence, request);
 }

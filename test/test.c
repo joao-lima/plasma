@@ -26,6 +26,11 @@ struct routines_t {
 
 struct routines_t routines[] =
 {
+    { "zgeadd", test_zgeadd },
+    { "dgeadd", test_dgeadd },
+    { "cgeadd", test_cgeadd },
+    { "sgeadd", test_sgeadd },
+
     { "zgelqf", test_zgelqf },
     { "dgelqf", test_dgelqf },
     { "cgelqf", test_cgelqf },
@@ -130,6 +135,21 @@ struct routines_t routines[] =
     { "dtrsm", test_dtrsm },
     { "ctrsm", test_ctrsm },
     { "strsm", test_strsm },
+
+    { "ztrtri", test_ztrtri },
+    { "dtrtri", test_dtrtri },
+    { "ctrtri", test_ctrtri },
+    { "strtri", test_strtri },
+
+    { "zunmlq", test_zunmlq },
+    { "dormlq", test_dormlq },
+    { "cunmlq", test_cunmlq },
+    { "sormlq", test_sormlq },
+
+    { "zunmqr", test_zunmqr },
+    { "dormqr", test_dormqr },
+    { "cunmqr", test_cunmqr },
+    { "sormqr", test_sormqr },
 
     { NULL, NULL }  // last entry
 };
