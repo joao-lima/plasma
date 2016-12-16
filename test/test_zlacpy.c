@@ -121,7 +121,7 @@ void test_zlacpy(param_value_t param[], char *info)
     switch (uplo) {
         case PlasmaLower:
             LAPACKE_zlaset_work(
-                mtrxLayout, 'U', m-1, n-1, 0.0, 0.0, &B[n], ldb);
+                mtrxLayout, 'U', m-1, n-1, 0.0, 0.0, &B[m], ldb);
             break;
         case PlasmaUpper:
             LAPACKE_zlaset_work(
@@ -207,6 +207,7 @@ void test_zlacpy(param_value_t param[], char *info)
     free(A);
     free(B);
 
-    if (test)
+    if (test) {
         free(Bref);
+    }
 }
