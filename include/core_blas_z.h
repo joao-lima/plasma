@@ -17,6 +17,7 @@
 #include "plasma_descriptor.h"
 #include "plasma_types.h"
 #include "plasma_workspace.h"
+#include "plasma_descriptor.h"
 
 #ifdef __cplusplus
 extern "C" {
