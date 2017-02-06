@@ -411,14 +411,12 @@ int test_routine(int test, const char *name, param_value_t pval[])
     run_routine(name, pval, info);
 
     if (pval == NULL) {
-        printf("\n");
           printf("%s,%s,%s,%s,%s\n",
-               "Status",
+               "Routine",
                "Error",
               "Seconds",
               "GFLOPS",
               info);
-        printf("\n");
         return 0;
     }
     else if (test) {
@@ -432,7 +430,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     }
     else {
           printf("%s,%s,%.4lf,%.4lf,%s\n",
-               "---",
+               name,
               "---",
                pval[PARAM_TIME].d,
               pval[PARAM_GFLOPS].d,

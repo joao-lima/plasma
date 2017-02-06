@@ -18,6 +18,8 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#include <omp.h>
+
 /***************************************************************************//**
  *
  * @ingroup plasma_potrf

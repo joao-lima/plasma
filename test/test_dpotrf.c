@@ -142,6 +142,7 @@ void test_dpotrf(param_value_t param[], char *info)
 
     //param[PARAM_TIME].d = time;
     param[PARAM_TIME].d = (plasma_time_t)_dpotrf_time;
+    time = (plasma_time_t)_dpotrf_time;
     param[PARAM_GFLOPS].d = flops_dpotrf(n) / time / 1e9;
 
     //================================================================
