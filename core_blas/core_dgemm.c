@@ -6,7 +6,7 @@
  *  University of Tennessee, US,
  *  University of Manchester, UK.
  *
- * @generated from core_blas/core_zgemm.c, normal z -> d, Mon Feb  6 14:06:46 2017
+ * @generated from core_blas/core_zgemm.c, normal z -> d, Sat Feb  4 20:58:52 2017
  *
  **/
 
@@ -121,6 +121,9 @@ void core_omp_dgemm(
     else
         bk = k;
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("dgemm");
+#endif
     #pragma omp task depend(in:A[0:lda*ak]) \
                      depend(in:B[0:ldb*bk]) \
                      depend(inout:C[0:ldc*n])

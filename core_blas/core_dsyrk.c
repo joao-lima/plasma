@@ -6,7 +6,7 @@
  *  University of Tennessee, US,
  *  University of Manchester, UK.
  *
- * @generated from core_blas/core_zsyrk.c, normal z -> d, Mon Feb  6 14:06:55 2017
+ * @generated from core_blas/core_zsyrk.c, normal z -> d, Sat Feb  4 20:58:59 2017
  *
  **/
 
@@ -96,6 +96,9 @@ void core_omp_dsyrk(
     else
         ak = n;
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("dsyrk");
+#endif
     #pragma omp task depend(in:A[0:lda*ak]) \
                      depend(inout:C[0:ldc*n])
     {

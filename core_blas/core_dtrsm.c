@@ -6,7 +6,7 @@
  *  University of Tennessee, US,
  *  University of Manchester, UK.
  *
- * @generated from core_blas/core_ztrsm.c, normal z -> d, Mon Feb  6 14:06:57 2017
+ * @generated from core_blas/core_ztrsm.c, normal z -> d, Sat Feb  4 20:59:01 2017
  *
  **/
 
@@ -113,6 +113,9 @@ void core_omp_dtrsm(
     else
         ak = n;
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("dtrsm");
+#endif
     #pragma omp task depend(in:A[0:lda*ak]) \
                      depend(inout:B[0:ldb*n])
     {

@@ -6,7 +6,7 @@
  *  University of Tennessee, US,
  *  University of Manchester, UK.
  *
- * @generated from core_blas/core_zlacpy.c, normal z -> d, Mon Feb  6 14:06:48 2017
+ * @generated from core_blas/core_zlacpy.c, normal z -> d, Sat Feb  4 20:58:54 2017
  *
  **/
 
@@ -70,6 +70,9 @@ void core_omp_dlacpy(plasma_enum_t uplo,
                            double *B, int ldb,
                      plasma_sequence_t *sequence, plasma_request_t *request)
 {
+#if defined(USE_OMPEXT)
+omp_set_task_name("dlacpy");
+#endif
     #pragma omp task depend(in:A[0:lda*n]) \
                      depend(out:B[0:ldb*n])
     {

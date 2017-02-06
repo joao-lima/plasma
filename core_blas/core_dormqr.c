@@ -240,6 +240,9 @@ void core_omp_dormqr(plasma_enum_t side, plasma_enum_t trans,
                      plasma_workspace_t work,
                      plasma_sequence_t *sequence, plasma_request_t *request)
 {
+#if defined(USE_OMPEXT)
+omp_set_task_name("dormqr");
+#endif
     #pragma omp task depend(in:A[0:lda*k]) \
                      depend(in:T[0:ib*k]) \
                      depend(inout:C[0:ldc*n])

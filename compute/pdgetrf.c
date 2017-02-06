@@ -6,7 +6,7 @@
  *  University of Tennessee, US,
  *  University of Manchester, UK.
  *
- * @generated from compute/pzgetrf.c, normal z -> d, Mon Feb  6 14:06:15 2017
+ * @generated from compute/pzgetrf.c, normal z -> d, Sat Feb  4 20:58:25 2017
  *
  **/
 
@@ -48,6 +48,9 @@ void plasma_pdgetrf(plasma_desc_t A, int *ipiv,
         int ldak = plasma_tile_mmain(A, k);
 
         // panel
+#if defined(USE_OMPEXT)
+omp_set_task_name("panel");
+#endif
         #pragma omp task depend(inout:a00[0:ma00k*na00k]) \
                          depend(inout:a20[0:lda20*nvak]) \
                          depend(out:ipiv[k*A.mb:mvak]) /*\
@@ -55,6 +58,9 @@ void plasma_pdgetrf(plasma_desc_t A, int *ipiv,
         {
             if (sequence->status == PlasmaSuccess) {
                 for (int rank = 0; rank < num_panel_threads; rank++) {
+#if defined(USE_OMPEXT)
+omp_set_task_name("dgetrf");
+#endif
                     #pragma omp task // priority(1)
                     {
                         plasma_desc_t view =
@@ -88,6 +94,9 @@ void plasma_pdgetrf(plasma_desc_t A, int *ipiv,
 
             int nvan = plasma_tile_nview(A, n);
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("update");
+#endif
             #pragma omp task depend(in:a00[0:ma00k*na00k]) \
                              depend(in:a20[0:lda20*nvak]) \
                              depend(in:ipiv[k*A.mb:mvak]) \
@@ -116,6 +125,9 @@ void plasma_pdgetrf(plasma_desc_t A, int *ipiv,
                         int mvam = plasma_tile_mview(A, m);
                         int ldam = plasma_tile_mmain(A, m);
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("dgemm");
+#endif
                         #pragma omp task // priority(n == k+1)
                         {
                             core_dgemm(
@@ -138,6 +150,9 @@ void plasma_pdgetrf(plasma_desc_t A, int *ipiv,
         int makk = (A.mt-k-1)*A.mb;
         int nakk = plasma_tile_nmain(A, k);
 
+#if defined(USE_OMPEXT)
+omp_set_task_name("dlaswp");
+#endif
         #pragma omp task depend(in:ipiv[(imin(A.mt, A.nt)-1)*A.mb]) \
                          depend(inout:akk[0:makk*nakk])
         {

@@ -216,6 +216,9 @@ void core_omp_dtsqrt(int m, int n, int ib,
                      plasma_workspace_t work,
                      plasma_sequence_t *sequence, plasma_request_t *request)
 {
+#if defined(USE_OMPEXT)
+omp_set_task_name("dtsqrt");
+#endif
     #pragma omp task depend(inout:A1[0:lda1*n]) \
                      depend(inout:A2[0:lda2*n]) \
                      depend(out:T[0:ib*n])
