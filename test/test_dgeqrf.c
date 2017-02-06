@@ -219,14 +219,14 @@ void test_dgeqrf(param_value_t param[], char *info)
         // Return ortho. column value.
         int len = strlen(info);
         snprintf(&info[len], imax(0, InfoLen - len),
-                 " %*.2e",
-                 InfoSpacing, param[PARAM_ORTHO].d);
+                 ",%.2e",
+                 param[PARAM_ORTHO].d);
     }
     else {
         // No ortho. test.
         int len = strlen(info);
         snprintf(&info[len], imax(0, InfoLen - len),
-                 " %*s",
+                 ",%s",
                  InfoSpacing, "---");
     }
 
