@@ -59,23 +59,23 @@ void test_dpotrf(param_value_t param[], char *info)
         else {
             // Return column labels.
             snprintf(info, InfoLen,
-                     "%*s %*s %*s %*s %*s",
-                     InfoSpacing, "Uplo",
-                     InfoSpacing, "N",
-                     InfoSpacing, "PadA",
-                     InfoSpacing, "NB",
-                     InfoSpacing, "ZeroCol");
+                     "%s,%s,%s,%s,%s",
+                     "Uplo",
+                     "N",
+                     "PadA",
+                     "NB",
+                     "ZeroCol");
         }
         return;
     }
     // Return column values.
-    snprintf(info, InfoLen,
-             "%*c %*d %*d %*d %*d",
-             InfoSpacing, param[PARAM_UPLO].c,
-             InfoSpacing, param[PARAM_DIM].dim.n,
-             InfoSpacing, param[PARAM_PADA].i,
-             InfoSpacing, param[PARAM_NB].i,
-             InfoSpacing, param[PARAM_ZEROCOL].i);
+    snprintf(info, 
+             "%c,%d,%d,%d,%*d",
+             param[PARAM_UPLO].c,
+             param[PARAM_DIM].dim.n,
+             param[PARAM_PADA].i,
+             param[PARAM_NB].i,
+             param[PARAM_ZEROCOL].i);
 
     //================================================================
     // Set parameters.
