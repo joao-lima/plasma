@@ -25,6 +25,7 @@ typedef enum {
     PARAM_OUTER,   // outer product iteration?
     PARAM_DIM_OUTER, // outer product iteration for dimensions M, N, K?
     PARAM_TEST,    // test the solution?
+    PARAM_CSV,    // csv output ?
     PARAM_TOL,     // tolerance
     PARAM_TRANS,   // transposition
     PARAM_TRANSA,  // transposition of A
@@ -77,6 +78,7 @@ static const char * const ParamUsage[][2] = {
     {"--dim-outer=[y|n]", "outer product iteration of M x N x K"
                           " in subsequent --dim [default: n]"},
     {"--test=[y|n]", "test the solution [default: y]"},
+    {"--csv=[y|n]", "CSV output [default: n]"},
     {"--tol=", "tolerance [default: 50]"},
     {"--trans=[n|t|c]", "transposition [default: n]"},
     {"--transa=[n|t|c]", "transposition of A [default: n]"},
@@ -162,7 +164,7 @@ static const int InfoSpacing = 11;
 void print_main_usage();
 void print_routine_usage(const char *name);
 void print_usage(int label);
-int  test_routine(int test, const char *name, param_value_t param[]);
+int  test_routine(int test,int csv, const char *name, param_value_t param[]);
 void run_routine(const char *name, param_value_t pval[], char *info);
 void param_init(param_t param[]);
 int  param_read(int argc, char **argv, param_t param[]);

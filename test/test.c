@@ -290,10 +290,11 @@ int main(int argc, char **argv)
     int iter = param_read(argc, argv, param);
     int outer = param[PARAM_OUTER].val[0].c == 'y';
     int test = param[PARAM_TEST].val[0].c == 'y';
+    int csv = param[PARAM_CSV].val[0].c == 'y';
     int err = 0;
 
     // Print labels.
-    test_routine(test, routine, NULL);
+    test_routine(test, csv, routine, NULL);
 
     plasma_init();
     if (outer) {
@@ -301,7 +302,7 @@ int main(int argc, char **argv)
         do {
             param_snap(param, pval);
             for (int i = 0; i < iter; i++) {
-                err += test_routine(test, routine, pval);
+                err += test_routine(test, csv, routine, pval);
             }
             if (iter > 1) {
                 printf("\n");
@@ -314,7 +315,7 @@ int main(int argc, char **argv)
         do {
             param_snap(param, pval);
             for (int i = 0; i < iter; i++) {
-                err += test_routine(test, routine, pval);
+                err += test_routine(test, csv, routine, pval);
             }
             if (iter > 1) {
                 printf("\n");
@@ -369,6 +370,7 @@ void print_routine_usage(const char *name)
     print_usage(PARAM_OUTER);
     print_usage(PARAM_DIM_OUTER);
     print_usage(PARAM_TEST);
+    print_usage(PARAM_CSV);
     print_usage(PARAM_TOL);
 
     printf("\n");
@@ -405,19 +407,28 @@ void print_usage(int label)
  * @retval 0 - success
  *
  ******************************************************************************/
-int test_routine(int test, const char *name, param_value_t pval[])
+int test_routine(int test, int csv, const char *name, param_value_t pval[])
 {
     char info[InfoLen];
     run_routine(name, pval, info);
 
     if (pval == NULL) {
         printf("\n");
-        printf("%*s %*s %*s %*s %s\n",
-            InfoSpacing, "Status",
-            InfoSpacing, "Error",
-            InfoSpacing, "Seconds",
-            InfoSpacing, "GFLOPS",
-                         info);
+        if(csv){
+          printf("%*s,%*s,%*s,%*s,%s\n",
+              InfoSpacing, "Status",
+              InfoSpacing, "Error",
+              InfoSpacing, "Seconds",
+              InfoSpacing, "GFLOPS",
+                           info);
+        } else {
+          printf("%*s %*s %*s %*s %s\n",
+              InfoSpacing, "Status",
+              InfoSpacing, "Error",
+              InfoSpacing, "Seconds",
+              InfoSpacing, "GFLOPS",
+                           info);
+        }
         printf("\n");
         return 0;
     }
@@ -431,12 +442,21 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-        printf("%*s %*s %*.4lf %*.4lf %s\n",
+        if(csv){
+        printf("%*s,%*s,%*.4lf,%*.4lf,%s\n",
             InfoSpacing, "---",
             InfoSpacing, "---",
             InfoSpacing, pval[PARAM_TIME].d,
             InfoSpacing, pval[PARAM_GFLOPS].d,
                          info);
+        } else {
+          printf("%*s %*s %*.4lf %*.4lf %s\n",
+              InfoSpacing, "---",
+              InfoSpacing, "---",
+              InfoSpacing, pval[PARAM_TIME].d,
+              InfoSpacing, pval[PARAM_GFLOPS].d,
+                           info);
+        }
         return 0;
     }
 }
@@ -529,6 +549,9 @@ int param_read(int argc, char **argv, param_t param[])
         }
         else if (param_starts_with(argv[i], "--test="))
             err = param_scan_char(strchr(argv[i], '=')+1, &param[PARAM_TEST]);
+
+        else if (param_starts_with(argv[i], "--csv="))
+            err = param_scan_char(strchr(argv[i], '=')+1, &param[PARAM_CSV]);
 
         else if (param_starts_with(argv[i], "--side="))
             err = param_scan_char(strchr(argv[i], '=')+1, &param[PARAM_SIDE]);
@@ -640,6 +663,8 @@ int param_read(int argc, char **argv, param_t param[])
         param_add_char('y', &param[PARAM_OUTER]);
     if (param[PARAM_TEST].num == 0)
         param_add_char('y', &param[PARAM_TEST]);
+    if (param[PARAM_CSV].num == 0)
+        param_add_char('n', &param[PARAM_CSV]);
 
     if (param[PARAM_SIDE].num == 0)
         param_add_char('l', &param[PARAM_SIDE]);
