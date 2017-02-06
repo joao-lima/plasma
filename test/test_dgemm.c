@@ -58,35 +58,35 @@ void test_dgemm(param_value_t param[], char *info)
         else {
             // Return column labels.
             snprintf(info, InfoLen,
-                     "%*s %*s %*s %*s %*s %*s %*s %*s %*s %*s %*s",
-                     InfoSpacing, "TransA",
-                     InfoSpacing, "TransB",
-                     InfoSpacing, "M",
-                     InfoSpacing, "N",
-                     InfoSpacing, "K",
-                     InfoSpacing, "alpha",
-                     InfoSpacing, "beta",
-                     InfoSpacing, "PadA",
-                     InfoSpacing, "PadB",
-                     InfoSpacing, "PadC",
-                     InfoSpacing, "NB");
+                     "%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
+                     "TransA",
+                     "TransB",
+                     "M",
+                     "N",
+                     "K",
+                     "alpha",
+                     "beta",
+                     "PadA",
+                     "PadB",
+                     "PadC",
+                     "NB");
         }
         return;
     }
     // Return column values.
     snprintf(info, InfoLen,
-             "%*c %*c %*d %*d %*d %*.4f %*.4f %*d %*d %*d %*d",
-             InfoSpacing, param[PARAM_TRANSA].c,
-             InfoSpacing, param[PARAM_TRANSB].c,
-             InfoSpacing, param[PARAM_DIM].dim.m,
-             InfoSpacing, param[PARAM_DIM].dim.n,
-             InfoSpacing, param[PARAM_DIM].dim.k,
-             InfoSpacing, creal(param[PARAM_ALPHA].z),
-             InfoSpacing, creal(param[PARAM_BETA].z),
-             InfoSpacing, param[PARAM_PADA].i,
-             InfoSpacing, param[PARAM_PADB].i,
-             InfoSpacing, param[PARAM_PADC].i,
-             InfoSpacing, param[PARAM_NB].i);
+             "%c,%c,%d,%d,%d,%.4f,%.4f,%d,%d,%d,%d",
+             param[PARAM_TRANSA].c,
+             param[PARAM_TRANSB].c,
+             param[PARAM_DIM].dim.m,
+             param[PARAM_DIM].dim.n,
+             param[PARAM_DIM].dim.k,
+             creal(param[PARAM_ALPHA].z),
+             creal(param[PARAM_BETA].z),
+             param[PARAM_PADA].i,
+             param[PARAM_PADB].i,
+             param[PARAM_PADC].i,
+             param[PARAM_NB].i);
 
     //================================================================
     // Set parameters.
