@@ -58,7 +58,7 @@ void test_dpotrf(param_value_t param[], char *info)
         }
         else {
             // Return column labels.
-            snprintf(info, 
+            snprintf(info, InfoLen,
                      "%s,%s,%s,%s,%s",
                      "Uplo",
                      "N",
@@ -69,7 +69,7 @@ void test_dpotrf(param_value_t param[], char *info)
         return;
     }
     // Return column values.
-    snprintf(info, 
+    snprintf(info, InfoLen,
              "%c,%d,%d,%d,%d",
              param[PARAM_UPLO].c,
              param[PARAM_DIM].dim.n,
