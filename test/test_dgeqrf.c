@@ -227,7 +227,7 @@ void test_dgeqrf(param_value_t param[], char *info)
         int len = strlen(info);
         snprintf(&info[len], imax(0, InfoLen - len),
                  ",%s",
-                 InfoSpacing, "---");
+                  "---");
     }
 
     //================================================================
