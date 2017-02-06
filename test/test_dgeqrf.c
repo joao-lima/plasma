@@ -53,27 +53,27 @@ void test_dgeqrf(param_value_t param[], char *info)
         else {
             // Return column labels.
             snprintf(info, InfoLen,
-                     "%*s %*s %*s %*s %*s %*s %*s",
-                     InfoSpacing, "M",
-                     InfoSpacing, "N",
-                     InfoSpacing, "PadA",
-                     InfoSpacing, "NB",
-                     InfoSpacing, "IB",
-                     InfoSpacing, "Hous. mode",
-                     InfoSpacing, "Ortho.");
+                     "%s,%s,%s,%s,%s,%s,%s",
+                     "M",
+                     "N",
+                     "PadA",
+                     "NB",
+                     "IB",
+                     "Hous. mode",
+                     "Ortho.");
         }
         return;
     }
     // Return column values.
     // ortho. column appended later.
     snprintf(info, InfoLen,
-             "%*d %*d %*d %*d %*d %*c",
-             InfoSpacing, param[PARAM_DIM].dim.m,
-             InfoSpacing, param[PARAM_DIM].dim.n,
-             InfoSpacing, param[PARAM_PADA].i,
-             InfoSpacing, param[PARAM_NB].i,
-             InfoSpacing, param[PARAM_IB].i,
-             InfoSpacing, param[PARAM_HMODE].c);
+             "%d,%d,%d,%d,%d,%c",
+             param[PARAM_DIM].dim.m,
+             param[PARAM_DIM].dim.n,
+             param[PARAM_PADA].i,
+             param[PARAM_NB].i,
+             param[PARAM_IB].i,
+             param[PARAM_HMODE].c);
 
     //================================================================
     // Set parameters.

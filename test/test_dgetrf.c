@@ -56,27 +56,27 @@ void test_dgetrf(param_value_t param[], char *info)
         else {
             // Return column labels.
             snprintf(info, InfoLen,
-                     "%*s %*s %*s %*s %*s %*s %*s",
-                     InfoSpacing, "M",
-                     InfoSpacing, "N",
-                     InfoSpacing, "PadA",
-                     InfoSpacing, "NB",
-                     InfoSpacing, "IB",
-                     InfoSpacing, "NTPF",
-                     InfoSpacing, "ZeroCol");
+                     "%s,%s,%s,%s,%s,%s,%s",
+                     "M",
+                     "N",
+                     "PadA",
+                     "NB",
+                     "IB",
+                     "NTPF",
+                     "ZeroCol");
         }
         return;
     }
     // Return column values.
     snprintf(info, InfoLen,
-             "%*d %*d %*d %*d %*d %*d %*d",
-             InfoSpacing, param[PARAM_DIM].dim.m,
-             InfoSpacing, param[PARAM_DIM].dim.n,
-             InfoSpacing, param[PARAM_PADA].i,
-             InfoSpacing, param[PARAM_NB].i,
-             InfoSpacing, param[PARAM_IB].i,
-             InfoSpacing, param[PARAM_NTPF].i,
-             InfoSpacing, param[PARAM_ZEROCOL].i);
+             "%d,%d,%d,%d,%d,%d,%d",
+             param[PARAM_DIM].dim.m,
+             param[PARAM_DIM].dim.n,
+             param[PARAM_PADA].i,
+             param[PARAM_NB].i,
+             param[PARAM_IB].i,
+             param[PARAM_NTPF].i,
+             param[PARAM_ZEROCOL].i);
 
     //================================================================
     // Set parameters.
