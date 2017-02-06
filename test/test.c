@@ -432,10 +432,10 @@ int test_routine(int test, const char *name, param_value_t pval[])
     }
     else {
           printf("%s,%s,%.4lf,%.4lf,%s\n",
-              InfoSpacing, "---",
-              InfoSpacing, "---",
-              InfoSpacing, pval[PARAM_TIME].d,
-              InfoSpacing, pval[PARAM_GFLOPS].d,
+               "---",
+              "---",
+               pval[PARAM_TIME].d,
+              pval[PARAM_GFLOPS].d,
                            info);
         return 0;
     }
