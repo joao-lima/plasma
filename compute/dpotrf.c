@@ -71,7 +71,7 @@
  *
  ******************************************************************************/
 
-plasma_time_t _dpotrf_time;
+double _dpotrf_time;
 
 int plasma_dpotrf(plasma_enum_t uplo,
                   int n,
@@ -135,14 +135,14 @@ int plasma_dpotrf(plasma_enum_t uplo,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
-    plasma_time_t start = omp_get_wtime();
+    double start = omp_get_wtime();
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dpotrf(uplo, A, sequence, &request);
     }
-    plasma_time_t stop = omp_get_wtime();
+    double stop = omp_get_wtime();
     _dpotrf_time = stop-start;
 
     #pragma omp parallel
