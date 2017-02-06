@@ -28,6 +28,8 @@
 
 #define A(i_, j_) A[(i_) + (size_t)lda*(j_)]
 
+extern plasma_time_t _dpotrf_time;
+
 /***************************************************************************//**
  *
  * @brief Tests DPOTRF.
@@ -138,7 +140,8 @@ void test_dpotrf(param_value_t param[], char *info)
     plasma_time_t stop = omp_get_wtime();
     plasma_time_t time = stop-start;
 
-    param[PARAM_TIME].d = time;
+    //param[PARAM_TIME].d = time;
+    param[PARAM_TIME].d = _dpotrf_time;
     param[PARAM_GFLOPS].d = flops_dpotrf(n) / time / 1e9;
 
     //================================================================
