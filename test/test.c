@@ -295,7 +295,7 @@ int main(int argc, char **argv)
     int err = 0;
 
     // Print labels.
-    test_routine(test, routine, NULL);
+    //test_routine(test, routine, NULL);
 
     plasma_init();
     if (outer) {
