@@ -16,6 +16,8 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include <omp.h>
+
 /******************************************************************************/
 typedef void (*test_func_ptr)(param_value_t param[], char *info);
 
@@ -429,9 +431,9 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%s,%.4lf,%.4lf,%s\n",
+          printf("%s,%d,%.4lf,%.4lf,%s\n",
                name,
-              "---",
+              omp_get_max_threads(),
                pval[PARAM_TIME].d,
               pval[PARAM_GFLOPS].d,
                            info);
