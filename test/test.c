@@ -415,7 +415,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     if (pval == NULL) {
           printf("%s,%s,%s,%s,%s\n",
                "Routine",
-               "Error",
+               "Threads",
               "Seconds",
               "GFLOPS",
               info);
