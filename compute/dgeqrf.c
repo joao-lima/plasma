@@ -146,10 +146,18 @@ int plasma_dgeqrf(int m, int n,
     {
         // Translate to tile layout.
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
+    }
 
+    #pragma omp parallel
+    #pragma omp master
+    {
         // Call the tile async function.
         plasma_omp_dgeqrf(A, *T, work, sequence, &request);
+    }
 
+    #pragma omp parallel
+    #pragma omp master
+    {
         // Translate back to LAPACK layout.
         plasma_omp_ddesc2ge(A, pA, lda, sequence, &request);
     }
