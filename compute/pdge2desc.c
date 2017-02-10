@@ -18,6 +18,7 @@
 #include "plasma_workspace.h"
 #include "core_blas.h"
 
+#define mapping(j,i) ( ((j/4)%2)*2+(i/4)%2)
 /******************************************************************************/
 void plasma_pdge2desc(double *pA, int lda,
                       plasma_desc_t A,
@@ -46,6 +47,9 @@ void plasma_pdge2desc(double *pA, int lda,
             f77 = &pA[(size_t)A.nb*lda*n + (size_t)A.mb*m];
             bdl = (double*)plasma_tile_addr(A, m, n);
 
+#if defined(USE_OMPEXT)
+omp_set_task_affinity(2, mapping(n, m), 1);
+#endif
             core_omp_dlacpy(PlasmaGeneral,
                             y2-y1, x2-x1,
                             &(f77[x1*lda+y1]), lda,
