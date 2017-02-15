@@ -24,6 +24,7 @@
 
 #define REAL
 
+extern double _dgeqrf_time;
 /***************************************************************************//**
  *
  * @brief Tests DGEQRF.
@@ -132,7 +133,9 @@ void test_dgeqrf(param_value_t param[], char *info)
     plasma_time_t stop = omp_get_wtime();
     plasma_time_t time = stop-start;
 
-    param[PARAM_TIME].d = time;
+    //param[PARAM_TIME].d = time;
+    param[PARAM_TIME].d = (plasma_time_t)_dgeqrf_time;
+    time = (plasma_time_t)_dgeqrf_time;
     param[PARAM_GFLOPS].d = flops_dgeqrf(m, n) / time / 1e9;
 
     //=================================================================

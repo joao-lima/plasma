@@ -18,7 +18,9 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#include <omp.h>
 #include "mkl_lapacke.h"
+double _dgetrf_time;
 
 /***************************************************************************//**
  *
@@ -85,12 +87,15 @@ int plasma_dgetrf(int m, int n,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+    double start = omp_get_wtime();
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dgetrf(A, ipiv, sequence, &request);
     }
+    double stop = omp_get_wtime();
+    _dgetrf_time = stop-start;
 
     #pragma omp parallel
     #pragma omp master

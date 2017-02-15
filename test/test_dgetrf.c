@@ -26,6 +26,8 @@
 
 #define REAL
 
+extern double _dgetrf_time;
+
 /***************************************************************************//**
  *
  * @brief Tests DPOTRF.
@@ -132,7 +134,9 @@ void test_dgetrf(param_value_t param[], char *info)
     plasma_time_t stop = omp_get_wtime();
     plasma_time_t time = stop-start;
 
-    param[PARAM_TIME].d = time;
+    //param[PARAM_TIME].d = time;
+    param[PARAM_TIME].d = (plasma_time_t)_dgetrf_time;
+    time = (plasma_time_t)_dgetrf_time;
     param[PARAM_GFLOPS].d = flops_dgetrf(m, n) / time / 1e9;
 
     //================================================================

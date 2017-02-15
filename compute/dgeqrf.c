@@ -18,6 +18,8 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#include <omp.h>
+double _dgeqrf_time;
 /***************************************************************************//**
  *
  * @ingroup plasma_geqrf
@@ -148,12 +150,15 @@ int plasma_dgeqrf(int m, int n,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+    double start = omp_get_wtime();
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dgeqrf(A, *T, work, sequence, &request);
     }
+    double stop = omp_get_wtime();
+    _dgeqrf_time = stop-start;
 
     #pragma omp parallel
     #pragma omp master
