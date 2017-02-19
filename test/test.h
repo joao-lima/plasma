@@ -58,6 +58,8 @@ typedef enum {
     PARAM_ORTHO,   // orthogonality error
     PARAM_TIME,    // time to solution
     PARAM_GFLOPS,  // GFLOPS rate
+    PARAM_START,  // 
+    PARAM_STOP,  // 
 
     //------------------------------------------------------
     // Keep at the end!

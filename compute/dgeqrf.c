@@ -24,6 +24,9 @@
 
 #include <omp.h>
 double _dgeqrf_time;
+extern double _start;
+extern double _end;
+
 /***************************************************************************//**
  *
  * @ingroup plasma_geqrf
@@ -176,6 +179,8 @@ int plasma_dgeqrf(int m, int n,
 #endif
     double stop = omp_get_wtime();
     _dgeqrf_time = stop-start;
+    _start = start;
+    _end = stop;
 
     #pragma omp parallel
     #pragma omp master

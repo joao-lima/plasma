@@ -24,6 +24,9 @@
 #include <likwid.h>
 #endif
 
+extern double _start;
+extern double _end;
+
 /***************************************************************************//**
  *
  * @ingroup plasma_potrf
@@ -163,6 +166,8 @@ int plasma_dpotrf(plasma_enum_t uplo,
 #endif // _LIKWID
     double stop = omp_get_wtime();
     _dpotrf_time = stop-start;
+    _start = start;
+    _end = stop;
 
     #pragma omp parallel
     #pragma omp master
