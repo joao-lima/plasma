@@ -117,6 +117,8 @@ static const char * const ParamUsage[][2] = {
     {"error", "numerical error"},
     {"ortho", "orthogonality error"},
     {"time", "time to solution"},
+    {"start", "start time"},
+    {"stop", "stop time"},
     {"gflops", "GFLOPS rate"}
 };
 
