@@ -20,6 +20,10 @@
 
 #include <omp.h>
 
+#if defined(_LIKWID)
+#include <likwid.h>
+#endif
+
 /***************************************************************************//**
  *
  * @ingroup plasma_potrf
@@ -138,12 +142,25 @@ int plasma_dpotrf(plasma_enum_t uplo,
     }
 
     double start = omp_get_wtime();
+#if defined(_LIKWID)
+    #pragma omp parallel
+    {
+      LIKWID_MARKER_START("plasma");
+      #pragma omp master
+      {
+          // Call the tile async function.
+          plasma_omp_dpotrf(uplo, A, sequence, &request);
+      }
+      LIKWID_MARKER_STOP("plasma");
+    }
+#else
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dpotrf(uplo, A, sequence, &request);
     }
+#endif // _LIKWID
     double stop = omp_get_wtime();
     _dpotrf_time = stop-start;
 

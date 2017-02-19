@@ -18,6 +18,10 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#if defined(_LIKWID)
+#include <likwid.h>
+#endif
+
 #include <omp.h>
 double _dgeqrf_time;
 /***************************************************************************//**
@@ -151,12 +155,25 @@ int plasma_dgeqrf(int m, int n,
     }
 
     double start = omp_get_wtime();
+#if defined(_LIKWID)
+    #pragma omp parallel
+    {
+      LIKWID_MARKER_START("plasma");
+      #pragma omp master
+      {
+          // Call the tile async function.
+          plasma_omp_dgeqrf(A, *T, work, sequence, &request);
+      }
+      LIKWID_MARKER_STOP("plasma");
+    }
+#else // _LIKWID
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dgeqrf(A, *T, work, sequence, &request);
     }
+#endif
     double stop = omp_get_wtime();
     _dgeqrf_time = stop-start;
 

@@ -18,6 +18,10 @@
 
 #include <omp.h>
 
+#if defined(_LIKWID)
+#include <likwid.h>
+#endif
+
 /******************************************************************************/
 typedef void (*test_func_ptr)(param_value_t param[], char *info);
 
@@ -296,7 +300,14 @@ int main(int argc, char **argv)
 
     // Print labels.
     //test_routine(test, routine, NULL);
-
+#if defined(_LIKWID)
+    LIKWID_MARKER_INIT;
+#pragma omp parallel
+    {
+    LIKWID_MARKER_THREADINIT;
+    LIKWID_MARKER_REGISTER("plasma");
+    }
+#endif
     plasma_init();
     if (outer) {
         // outer product iteration
@@ -324,6 +335,9 @@ int main(int argc, char **argv)
         }
         while (param_step_inner(param));
     }
+#if defined(_LIKWID)
+    LIKWID_MARKER_CLOSE;
+#endif
     plasma_finalize();
     printf("\n");
     return err;

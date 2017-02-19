@@ -22,6 +22,10 @@
 #include "mkl_lapacke.h"
 double _dgetrf_time;
 
+#if defined(_LIKWID)
+#include <likwid.h>
+#endif
+
 /***************************************************************************//**
  *
  ******************************************************************************/
@@ -88,12 +92,25 @@ int plasma_dgetrf(int m, int n,
     }
 
     double start = omp_get_wtime();
+#if defined(_LIKWID)
+    #pragma omp parallel
+    {
+      LIKWID_MARKER_START("plasma");
+      #pragma omp master
+      {
+          // Call the tile async function.
+          plasma_omp_dgetrf(A, ipiv, sequence, &request);
+      }
+      LIKWID_MARKER_STOP("plasma");
+    }
+#else
     #pragma omp parallel
     #pragma omp master
     {
         // Call the tile async function.
         plasma_omp_dgetrf(A, ipiv, sequence, &request);
     }
+#endif // _LIKWID
     double stop = omp_get_wtime();
     _dgetrf_time = stop-start;
 

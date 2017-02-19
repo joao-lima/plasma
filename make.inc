@@ -31,6 +31,7 @@ LDFLAGS   = -fopenmp $(FPIC)
 #            -DMKL_Complex8="float _Complex"
 
 #CFLAGS += -DUSE_OMPEXT
+#CFLAGS += -D_LIKWID -DLIKWID_PERFMON
 
 # --------------------
 # libraries
@@ -43,6 +44,7 @@ LDFLAGS   = -fopenmp $(FPIC)
 # With icc OpenMP (liomp5),  use -lmkl_sequential or (-lmkl_intel_thread with MKL_NUM_THREADS=1).
 #LIBS      = -L$(MKLROOT)/lib -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lm
 
+#LIBS      = $(HOME)/clang/install/openblas/lib/libopenblas.a -lm -lgfortran -llikwid
 LIBS      = $(HOME)/clang/install/openblas/lib/libopenblas.a -lm -lgfortran
 
 INC       = -I$(HOME)/clang/install/openblas/include
