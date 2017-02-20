@@ -18,6 +18,8 @@
 
 #include <omp.h>
 
+#include <inttypes.h>
+
 #if defined(_LIKWID)
 #include <likwid.h>
 #endif
@@ -435,6 +437,20 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char info[InfoLen];
     run_routine(name, pval, info);
 
+    char* numactl = "-";
+    char* compiler = "-";
+    char* runtime = "-";
+    char* type = "-";
+    
+    if(getenv("NUMACTL") != NULL)
+       numactl = getenv("NUMACTL");
+    if(getenv("COMPILER") != NULL)
+       compiler = getenv("COMPILER");
+    if(getenv("RUNTIME") != NULL)
+       runtime = getenv("RUNTIME");
+    if(getenv("TYPE") != NULL)
+       type = getenv("TYPE");
+
     if (pval == NULL) {
           printf("%s,%s,%s,%s,%s\n",
                "Routine",
@@ -454,13 +470,17 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s\n",
+          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s\n",
                name,
               omp_get_max_threads(),
                pval[PARAM_TIME].d,
               pval[PARAM_GFLOPS].d,
               pval[PARAM_START].t,
               pval[PARAM_STOP].t,
+              numactl,
+              compiler,
+              runtime,
+              type,
                            info);
         return 0;
     }
