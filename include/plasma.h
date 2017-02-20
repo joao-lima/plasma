@@ -10,6 +10,7 @@
 #ifndef ICL_PLASMA_H
 #define ICL_PLASMA_H
 
+#include <stdint.h>
 #include "plasma_async.h"
 #include "plasma_descriptor.h"
 #include "plasma_context.h"

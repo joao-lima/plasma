@@ -11,6 +11,7 @@
 #define TEST_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "plasma_types.h"
 
