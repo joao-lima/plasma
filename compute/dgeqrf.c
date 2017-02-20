@@ -25,7 +25,7 @@
 #include <omp.h>
 double _dgeqrf_time;
 double _dgeqrf_start;
-double _dgeqrf_end;
+double _dgeqrf_stop;
 
 /***************************************************************************//**
  *
