@@ -26,7 +26,7 @@
 
 extern double _dgeqrf_time;
 extern double _dgeqrf_start;
-extern double _dgeqrf_end;
+extern double _dgeqrf_stop;
 /***************************************************************************//**
  *
  * @brief Tests DGEQRF.
