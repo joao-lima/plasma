@@ -28,7 +28,7 @@ uint64_t get_elapsedtime(void)
   struct timeval tv;
   int err = gettimeofday( &tv, 0);
   if (err  !=0) return 0;
-  return 1000000*(uint64_t)tv.tv_sec + (uint64_t)tv.tv_usec;
+  return (uint64_t)tv.tv_sec + (uint64_t)(1e-6*tv.tv_usec);
 }
 
 /******************************************************************************/
@@ -454,7 +454,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%d,%.4lf,%.4lf,%lu,%lu,%s\n",
+          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s\n",
                name,
               omp_get_max_threads(),
                pval[PARAM_TIME].d,
