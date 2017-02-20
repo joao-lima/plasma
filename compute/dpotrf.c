@@ -144,6 +144,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+    _dpotrf_start = get_elapsedtime();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -165,9 +166,8 @@ int plasma_dpotrf(plasma_enum_t uplo,
     }
 #endif // _LIKWID
     double stop = omp_get_wtime();
+    _dpotrf_stop = get_elapsedtime();
     _dpotrf_time = stop-start;
-    _dpotrf_start = start;
-    _dpotrf_stop = stop;
 
     #pragma omp parallel
     #pragma omp master

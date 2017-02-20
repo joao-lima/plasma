@@ -93,6 +93,7 @@ int plasma_dgetrf(int m, int n,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+    _dgetrf_start = get_elapsedtime();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -114,9 +115,8 @@ int plasma_dgetrf(int m, int n,
     }
 #endif // _LIKWID
     double stop = omp_get_wtime();
+    _dgetrf_stop =get_elapsedtime();
     _dgetrf_time = stop-start;
-    _dgetrf_start = start;
-    _dgetrf_stop = stop;
 
     #pragma omp parallel
     #pragma omp master

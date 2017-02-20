@@ -25,6 +25,15 @@
 double _start;
 double _end;
 
+#include <sys/time.h>
+double get_elapsedtime(void)
+{
+  struct timeval tv;
+  int err = gettimeofday( &tv, 0);
+  if (err  !=0) return 0;
+  return (double)tv.tv_sec + 1e-6*(double)tv.tv_usec;
+}
+
 /******************************************************************************/
 typedef void (*test_func_ptr)(param_value_t param[], char *info);
 

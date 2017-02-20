@@ -162,6 +162,7 @@ static const int InfoLen = 1024;
 // each column is InfoSpacing wide + 1 space between columns
 static const int InfoSpacing = 11;
 
+double get_elapsedtime(void);
 // function declarations
 void print_main_usage();
 void print_routine_usage(const char *name);
