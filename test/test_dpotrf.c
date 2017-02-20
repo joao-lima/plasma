@@ -29,8 +29,8 @@
 #define A(i_, j_) A[(i_) + (size_t)lda*(j_)]
 
 extern double _dpotrf_time;
-extern double _start;
-extern double _end;
+extern double _dpotrf_start;
+extern double _dpotrf_stop;
 
 
 /***************************************************************************//**
@@ -147,8 +147,8 @@ void test_dpotrf(param_value_t param[], char *info)
     param[PARAM_TIME].d = (plasma_time_t)_dpotrf_time;
     time = (plasma_time_t)_dpotrf_time;
     param[PARAM_GFLOPS].d = flops_dpotrf(n) / time / 1e9;
-    param[PARAM_START].d = _start;
-    param[PARAM_STOP].d = _end;
+    param[PARAM_START].d = _dpotrf_start;
+    param[PARAM_STOP].d = _dpotrf_stop;
 
     //================================================================
     // Test results by comparing to a reference implementation.

@@ -21,8 +21,8 @@
 #include <omp.h>
 #include "mkl_lapacke.h"
 double _dgetrf_time;
-extern double _start;
-extern double _end;
+double _dgetrf_start;
+double _dgetrf_stop ;
 
 #if defined(_LIKWID)
 #include <likwid.h>
@@ -115,8 +115,8 @@ int plasma_dgetrf(int m, int n,
 #endif // _LIKWID
     double stop = omp_get_wtime();
     _dgetrf_time = stop-start;
-    _start = start;
-    _end = stop;
+    _dgetrf_start = start;
+    _dgetrf_stop = stop;
 
     #pragma omp parallel
     #pragma omp master
