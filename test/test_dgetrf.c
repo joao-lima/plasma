@@ -27,8 +27,8 @@
 #define REAL
 
 extern double _dgetrf_time;
-extern double _dgetrf_start;
-extern double _dgetrf_stop ;
+extern uint64_t _dgetrf_start;
+extern uint64_t _dgetrf_stop ;
 
 /***************************************************************************//**
  *
@@ -140,8 +140,8 @@ void test_dgetrf(param_value_t param[], char *info)
     param[PARAM_TIME].d = (plasma_time_t)_dgetrf_time;
     time = (plasma_time_t)_dgetrf_time;
     param[PARAM_GFLOPS].d = flops_dgetrf(m, n) / time / 1e9;
-    param[PARAM_START].d = _dgetrf_start;
-    param[PARAM_STOP].d = _dgetrf_stop;
+    param[PARAM_START].t = _dgetrf_start;
+    param[PARAM_STOP].t = _dgetrf_stop;
 
     //================================================================
     // Test results by comparing to a reference implementation.

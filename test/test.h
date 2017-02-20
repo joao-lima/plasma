@@ -136,6 +136,7 @@ typedef union {
     double d;              // double precision
     plasma_complex64_t z;  // double complex
     int3_t dim;            // m, n, k problem size
+    uint64_t t;
 } param_value_t;
 
 // parameter type
@@ -162,7 +163,7 @@ static const int InfoLen = 1024;
 // each column is InfoSpacing wide + 1 space between columns
 static const int InfoSpacing = 11;
 
-double get_elapsedtime(void);
+uint64_t get_elapsedtime(void);
 // function declarations
 void print_main_usage();
 void print_routine_usage(const char *name);

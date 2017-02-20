@@ -78,8 +78,8 @@
  ******************************************************************************/
 
 double _dpotrf_time;
-double _dpotrf_start;
-double _dpotrf_stop;
+uint64_t _dpotrf_start;
+uint64_t _dpotrf_stop;
 
 
 int plasma_dpotrf(plasma_enum_t uplo,
