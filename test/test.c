@@ -438,10 +438,18 @@ int test_routine(int test, const char *name, param_value_t pval[])
     run_routine(name, pval, info);
 
     char* numactl = "-";
-    char* compiler = "-";
     char* runtime = "-";
     char* type = "-";
-    
+#if defined(__clang__)
+    char* compiler = "clang";
+#elif defined(__ICC) || defined(__INTEL_COMPILER)
+    char* compiler = "icc";
+#elif defined(__GNUC__) || defined(__GNUG__)
+    char* compiler = "gcc";
+#else 
+    char* compiler = "-";
+#endif
+
     if(getenv("NUMACTL") != NULL)
        numactl = getenv("NUMACTL");
     if(getenv("COMPILER") != NULL)
