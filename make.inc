@@ -32,6 +32,8 @@ LDFLAGS   = -fopenmp $(FPIC)
 
 #CFLAGS += -DUSE_OMPEXT
 #CFLAGS += -D_LIKWID -DLIKWID_PERFMON
+# sleep for 5 seconds before/after measures
+CFLAGS += -D_SLEEP=5
 
 # --------------------
 # libraries

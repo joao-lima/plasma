@@ -18,6 +18,8 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#include <unistd.h>
+
 #if defined(_LIKWID)
 #include <likwid.h>
 #endif
@@ -157,6 +159,9 @@ int plasma_dgeqrf(int m, int n,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+#if defined(_SLEEP)
+    sleep(_SLEEP)
+#endif
     _dgeqrf_start = get_elapsedtime();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
@@ -179,8 +184,11 @@ int plasma_dgeqrf(int m, int n,
     }
 #endif
     double stop = omp_get_wtime();
-    _dgeqrf_stop = get_elapsedtime();
     _dgeqrf_time = stop-start;
+#if defined(_SLEEP)
+    sleep(_SLEEP)
+#endif
+    _dgeqrf_stop = get_elapsedtime();
 
     #pragma omp parallel
     #pragma omp master

@@ -18,6 +18,8 @@
 #include "plasma_types.h"
 #include "plasma_workspace.h"
 
+#include <unistd.h>
+
 #include <omp.h>
 
 #if defined(_LIKWID)
@@ -144,6 +146,9 @@ int plasma_dpotrf(plasma_enum_t uplo,
         plasma_omp_dge2desc(pA, lda, A, sequence, &request);
     }
 
+#if defined(_SLEEP)
+    sleep(_SLEEP)
+#endif
     _dpotrf_start = get_elapsedtime();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
@@ -166,8 +171,11 @@ int plasma_dpotrf(plasma_enum_t uplo,
     }
 #endif // _LIKWID
     double stop = omp_get_wtime();
-    _dpotrf_stop = get_elapsedtime();
     _dpotrf_time = stop-start;
+#if defined(_SLEEP)
+    sleep(_SLEEP)
+#endif
+    _dpotrf_stop = get_elapsedtime();
 
     #pragma omp parallel
     #pragma omp master
