@@ -147,7 +147,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
     }
 
 #if defined(_SLEEP)
-    sleep(_SLEEP)
+    sleep(_SLEEP);
 #endif
     _dpotrf_start = get_elapsedtime();
     double start = omp_get_wtime();
@@ -173,7 +173,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
     double stop = omp_get_wtime();
     _dpotrf_time = stop-start;
 #if defined(_SLEEP)
-    sleep(_SLEEP)
+    sleep(_SLEEP);
 #endif
     _dpotrf_stop = get_elapsedtime();
 

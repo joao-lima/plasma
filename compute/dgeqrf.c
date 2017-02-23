@@ -160,7 +160,7 @@ int plasma_dgeqrf(int m, int n,
     }
 
 #if defined(_SLEEP)
-    sleep(_SLEEP)
+    sleep(_SLEEP);
 #endif
     _dgeqrf_start = get_elapsedtime();
     double start = omp_get_wtime();
@@ -186,7 +186,7 @@ int plasma_dgeqrf(int m, int n,
     double stop = omp_get_wtime();
     _dgeqrf_time = stop-start;
 #if defined(_SLEEP)
-    sleep(_SLEEP)
+    sleep(_SLEEP);
 #endif
     _dgeqrf_stop = get_elapsedtime();
 
