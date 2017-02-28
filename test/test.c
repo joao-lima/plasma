@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #include <omp.h>
 
@@ -440,6 +441,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* numactl = "-";
     char* runtime = "-";
     char* type = "-";
+    char hostname[30];
 #if defined(__clang__)
     char* compiler = "clang";
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
@@ -459,8 +461,11 @@ int test_routine(int test, const char *name, param_value_t pval[])
     if(getenv("TYPE") != NULL)
        type = getenv("TYPE");
 
+    gethostname(hostname, sizeof(char)*30);
+
     if (pval == NULL) {
-          printf("%s,%s,%s,%s,%s\n",
+          printf("%s,%s,%s,%s,%s,%s\n",
+               "Hostname",
                "Routine",
                "Threads",
               "Seconds",
@@ -478,7 +483,8 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s\n",
+          printf("%s,%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s\n",
+                hostname,
                name,
               omp_get_max_threads(),
                pval[PARAM_TIME].d,
