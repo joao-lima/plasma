@@ -443,6 +443,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* type = "-";
     char* governor = "-";
     char hostname[30];
+    char* places = "-";
 #if defined(__clang__)
     char* compiler = "clang";
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
@@ -463,6 +464,8 @@ int test_routine(int test, const char *name, param_value_t pval[])
        runtime = getenv("RUNTIME");
     if(getenv("TYPE") != NULL)
        type = getenv("TYPE");
+    if(getenv("OMP_PLACES") != NULL)
+       places = getenv("OMP_PLACES");
 
     gethostname(hostname, sizeof(char)*30);
 
@@ -485,7 +488,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s,%s,%s\n",
+          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s,%s,%s,%s\n",
                name,
               omp_get_max_threads(),
                pval[PARAM_TIME].d,
@@ -498,6 +501,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
               type,
               hostname,
               governor,
+              places,
                            info);
         return 0;
     }
