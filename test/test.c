@@ -467,8 +467,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     gethostname(hostname, sizeof(char)*30);
 
     if (pval == NULL) {
-          printf("%s,%s,%s,%s,%s,%s\n",
-               "Hostname",
+          printf("%s,%s,%s,%s,%s\n",
                "Routine",
                "Threads",
               "Seconds",
@@ -486,8 +485,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s,%s\n",
-                hostname,
+          printf("%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s,%s,%s\n",
                name,
               omp_get_max_threads(),
                pval[PARAM_TIME].d,
@@ -498,6 +496,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
               compiler,
               runtime,
               type,
+              hostname,
               governor,
                            info);
         return 0;
