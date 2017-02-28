@@ -441,6 +441,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* numactl = "-";
     char* runtime = "-";
     char* type = "-";
+    char* governor = "-";
     char hostname[30];
 #if defined(__clang__)
     char* compiler = "clang";
@@ -452,6 +453,8 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* compiler = "-";
 #endif
 
+    if(getenv("GOVERNOR") != NULL)
+       governor = getenv("GOVERNOR");
     if(getenv("NUMACTL") != NULL)
        numactl = getenv("NUMACTL");
     if(getenv("COMPILER") != NULL)
@@ -483,7 +486,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
         return (pval[PARAM_SUCCESS].i == 0);
     }
     else {
-          printf("%s,%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s\n",
+          printf("%s,%s,%d,%.4lf,%.4lf,%" PRIu64 ",%" PRIu64 ",%s,%s,%s,%s,%s,%s\n",
                 hostname,
                name,
               omp_get_max_threads(),
@@ -495,6 +498,7 @@ int test_routine(int test, const char *name, param_value_t pval[])
               compiler,
               runtime,
               type,
+              governor,
                            info);
         return 0;
     }
