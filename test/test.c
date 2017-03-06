@@ -450,6 +450,8 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* compiler = "icc";
 #elif defined(__GNUC__) || defined(__GNUG__)
     char* compiler = "gcc";
+#elif defined(_MERCURIUM) || defined(_MCC)
+    char* compiler = "ompss";
 #else 
     char* compiler = "-";
 #endif
