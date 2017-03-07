@@ -42,7 +42,6 @@ prefix    ?= /usr/local/plasma
 # ----------------------------------------
 # Internal tools and flags
 
-codegen     := ./tools/codegen.py
 
 PLASMA_INC  := -Iinclude
 PLASMA_LIBS := -Llib -lplasma -lcoreblas
@@ -205,9 +204,7 @@ clean:
 # cleangen removes generated files if the template still exists;
 # grep for any stale generated files without a template.
 distclean: clean cleangen
-	grep -l @generated $(plasma_src) $(coreblas_src) $(test_src) | xargs rm
 	-rm -f compute/*.o control/*.o core_blas/*.o test/*.o
-	-rm -f $(makefiles_gen)
 	-rm -rf docs/html
 
 
@@ -219,44 +216,6 @@ plasma_src   := $(wildcard compute/*.c compute/*.h control/*.c control/*.h inclu
 coreblas_src := $(wildcard core_blas/*.c core_blas/*.h)
 
 test_src     := $(wildcard test/*.c test/*.h)
-
-Makefile.plasma.gen: $(codegen)
-	$(codegen) --make --prefix plasma   $(plasma_src)   > $@
-
-Makefile.coreblas.gen: $(codegen)
-	$(codegen) --make --prefix coreblas $(coreblas_src) > $@
-
-Makefile.test.gen: $(codegen)
-	$(codegen) --make --prefix test     $(test_src)     > $@
-
-
-# ----------
-# If the list of src files changes, then force remaking Makefile.gen
-# To reduce unnecesary remaking, don't remake if either:
-# 1) src == old:
-#    src has same files now as when Makefile.gen was generated, or
-# 2) src - generated == templates:
-#    src has all the templates from Makefile.gen, and no new non-generated files.
-ifneq ($(plasma_src),$(plasma_old))
-ifneq ($(filter-out $(plasma_generated),$(plasma_src)),$(plasma_templates))
-Makefile.plasma.gen: force_gen
-endif
-endif
-
-ifneq ($(coreblas_src),$(coreblas_old))
-ifneq ($(filter-out $(coreblas_generated),$(coreblas_src)),$(coreblas_templates))
-Makefile.coreblas.gen: force_gen
-endif
-endif
-
-ifneq ($(test_src),$(test_old))
-ifneq ($(filter-out $(test_generated),$(test_src)),$(test_templates))
-Makefile.test.gen: force_gen
-endif
-endif
-# ----------
-
-force_gen: ;
 
 
 # ----------------------------------------------------------------------
