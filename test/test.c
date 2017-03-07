@@ -25,8 +25,8 @@
 #include <likwid.h>
 #endif
 
-#include <time.h>
 #include <sys/time.h>
+
 uint64_t get_elapsedtime(void)
 {
   struct timeval tv;
@@ -35,6 +35,7 @@ uint64_t get_elapsedtime(void)
   return (uint64_t)tv.tv_sec + (uint64_t)(1e-6*tv.tv_usec);
 }
 
+#include <time.h>
 #if 1
 typedef struct timespec struct_time;
 #  define gettime(t) clock_gettime( CLOCK_REALTIME, t)

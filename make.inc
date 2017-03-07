@@ -21,8 +21,8 @@ RANLIB    = ranlib
 # can be commented out if making only static libraries.
 FPIC      = -fPIC
 
-CFLAGS    = -fopenmp $(FPIC) -O3 -std=c99 -Wall -pedantic -Wshadow -Wno-unused-function
-#CFLAGS    = -fopenmp $(FPIC) -O2 -std=c99 -Wall -pedantic -Wshadow -Wno-unused-function
+CFLAGS    = -fopenmp $(FPIC) -O3 -Wall -pedantic -Wshadow -Wno-unused-function
+#CFLAGS    = -fopenmp $(FPIC) -O2 -Wall -pedantic -Wshadow -Wno-unused-function
 LDFLAGS   = -fopenmp $(FPIC)
 
 # options for MKL
