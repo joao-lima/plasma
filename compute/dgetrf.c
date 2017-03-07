@@ -21,7 +21,6 @@
 #include <unistd.h>
 
 #include <omp.h>
-#include "mkl_lapacke.h"
 
 #if defined(_LIKWID)
 #include <likwid.h>
