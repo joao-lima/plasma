@@ -21,7 +21,7 @@ RANLIB    = ranlib
 # can be commented out if making only static libraries.
 FPIC      = -fPIC
 
-CFLAGS    = -fopenmp $(FPIC) -O3 -Wall -pedantic -Wshadow -Wno-unused-function
+CFLAGS    = -fopenmp $(FPIC) -O3 -Wall -std=gnu99 -pedantic -Wshadow -Wno-unused-function
 #CFLAGS    = -fopenmp $(FPIC) -O2 -Wall -pedantic -Wshadow -Wno-unused-function
 LDFLAGS   = -fopenmp $(FPIC)
 
@@ -46,7 +46,7 @@ CFLAGS += -D_SLEEP=5
 # With icc OpenMP (liomp5),  use -lmkl_sequential or (-lmkl_intel_thread with MKL_NUM_THREADS=1).
 #LIBS      = -L$(MKLROOT)/lib -lmkl_intel_lp64 -lmkl_core -lmkl_sequential -lm
 
-#LIBS      = $(HOME)/clang/install/openblas/lib/libopenblas.a -lm -lgfortran -llikwid
-LIBS      = $(HOME)/clang/install/openblas/lib/libopenblas.a -lm -lgfortran
+#LIBS      = $(HOME)/install/openblas/lib/libopenblas.a -lm -lgfortran -llikwid
+LIBS      = $(HOME)/install/openblas/lib/libopenblas.a -lm -lgfortran
 
-INC       = -I$(HOME)/clang/install/openblas/include
+INC       = -I$(HOME)/install/openblas/include
