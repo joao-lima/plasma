@@ -21,9 +21,6 @@
 #include <unistd.h>
 
 #include <omp.h>
-double _dgetrf_time;
-uint64_t _dgetrf_start;
-uint64_t _dgetrf_stop ;
 
 #if defined(_LIKWID)
 #include <likwid.h>
@@ -97,7 +94,7 @@ int plasma_dgetrf(int m, int n,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgetrf_start = get_elapsedtime();
+    plasma->start = kaapi_get_elapsedns();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -119,11 +116,11 @@ int plasma_dgetrf(int m, int n,
     }
 #endif // _LIKWID
     double stop = omp_get_wtime();
-    _dgetrf_time = stop-start;
+    plasma->time = stop-start;
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgetrf_stop =get_elapsedtime();
+    plasma->stop =kaapi_get_elapsedns();
 
     #pragma omp parallel
     #pragma omp master

@@ -24,9 +24,6 @@
 
 #define REAL
 
-extern double _dgeqrf_time;
-extern uint64_t _dgeqrf_start;
-extern uint64_t _dgeqrf_stop;
 /***************************************************************************//**
  *
  * @brief Tests DGEQRF.
@@ -136,11 +133,12 @@ void test_dgeqrf(param_value_t param[], char *info)
     plasma_time_t time = stop-start;
 
     //param[PARAM_TIME].d = time;
-    param[PARAM_TIME].d = (plasma_time_t)_dgeqrf_time;
-    time = (plasma_time_t)_dgeqrf_time;
+    plasma_context_t *plasma = plasma_context_self();
+    param[PARAM_TIME].d = (plasma_time_t)plasma->time;
+    time = (plasma_time_t)plasma->time;
     param[PARAM_GFLOPS].d = flops_dgeqrf(m, n) / time / 1e9;
-    param[PARAM_START].t = _dgeqrf_start;
-    param[PARAM_STOP].t = _dgeqrf_stop;
+    param[PARAM_START].t = plasma->start;
+    param[PARAM_STOP].t = plasma->stop;
 
     //=================================================================
     // Test results by checking orthogonality of Q and precision of Q*R

@@ -79,11 +79,6 @@
  *
  ******************************************************************************/
 
-double _dpotrf_time;
-uint64_t _dpotrf_start;
-uint64_t _dpotrf_stop;
-
-
 int plasma_dpotrf(plasma_enum_t uplo,
                   int n,
                   double *pA, int lda)
@@ -149,7 +144,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dpotrf_start = get_elapsedtime();
+    plasma->start = kaapi_get_elapsedns();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -171,11 +166,11 @@ int plasma_dpotrf(plasma_enum_t uplo,
     }
 #endif // _LIKWID
     double stop = omp_get_wtime();
-    _dpotrf_time = stop-start;
+    plasma->time = stop-start;
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dpotrf_stop = get_elapsedtime();
+    plasma->stop = kaapi_get_elapsedns();
 
     #pragma omp parallel
     #pragma omp master

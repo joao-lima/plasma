@@ -7,7 +7,7 @@
 # --------------------
 # programs
 
-CC        = gcc
+CC        = mcc
 
 ARCH      = ar
 ARCHFLAGS = cr
@@ -21,9 +21,8 @@ RANLIB    = ranlib
 # can be commented out if making only static libraries.
 FPIC      = -fPIC
 
-CFLAGS    = -fopenmp $(FPIC) -O3 -Wall -std=gnu99 -pedantic -Wshadow -Wno-unused-function
-#CFLAGS    = -fopenmp $(FPIC) -O2 -Wall -pedantic -Wshadow -Wno-unused-function
-LDFLAGS   = -fopenmp $(FPIC)
+CFLAGS    = --openmp $(FPIC) -O3 -Wall -std=gnu99
+LDFLAGS   = --openmp $(FPIC)
 
 # options for MKL
 #CFLAGS   += -DPLASMA_WITH_MKL \

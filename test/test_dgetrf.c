@@ -26,10 +26,6 @@
 
 #define REAL
 
-extern double _dgetrf_time;
-extern uint64_t _dgetrf_start;
-extern uint64_t _dgetrf_stop ;
-
 /***************************************************************************//**
  *
  * @brief Tests DPOTRF.
@@ -137,11 +133,12 @@ void test_dgetrf(param_value_t param[], char *info)
     plasma_time_t time = stop-start;
 
     //param[PARAM_TIME].d = time;
-    param[PARAM_TIME].d = (plasma_time_t)_dgetrf_time;
-    time = (plasma_time_t)_dgetrf_time;
+    plasma_context_t *plasma = plasma_context_self();
+    param[PARAM_TIME].d = (plasma_time_t)plasma->time;
+    time = (plasma_time_t)plasma->time;
     param[PARAM_GFLOPS].d = flops_dgetrf(m, n) / time / 1e9;
-    param[PARAM_START].t = _dgetrf_start;
-    param[PARAM_STOP].t = _dgetrf_stop;
+    param[PARAM_START].t = plasma->start;
+    param[PARAM_STOP].t = plasma->stop;
 
     //================================================================
     // Test results by comparing to a reference implementation.

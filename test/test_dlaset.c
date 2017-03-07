@@ -113,8 +113,13 @@ void test_dlaset(param_value_t param[], char *info)
     //================================================================
     // Run and time PLASMA
     //================================================================
+#if defined(_MERCURIUM) || defined(_MCC)
+    double alpha = 1.0;
+    double beta = 2.0;
+#else
     double alpha = 1.234+5.678*I;
     double beta = 2.345+6.789*I;
+#endif
 
     plasma_time_t start = omp_get_wtime();
     retval = plasma_dlaset(uplo, m, n, alpha, beta, A, lda);
