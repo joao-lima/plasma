@@ -25,9 +25,6 @@
 #endif
 
 #include <omp.h>
-double _dgeqrf_time;
-uint64_t _dgeqrf_start;
-uint64_t _dgeqrf_stop;
 
 /***************************************************************************//**
  *
@@ -162,7 +159,7 @@ int plasma_dgeqrf(int m, int n,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgeqrf_start = kaapi_get_elapsedns();
+    plasma->start = kaapi_get_elapsedns();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -184,11 +181,11 @@ int plasma_dgeqrf(int m, int n,
     }
 #endif
     double stop = omp_get_wtime();
-    _dgeqrf_time = stop-start;
+    plasma->time = stop-start;
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgeqrf_stop = kaapi_get_elapsedns();
+    plasma->stop = kaapi_get_elapsedns();
 
     #pragma omp parallel
     #pragma omp master

@@ -14,6 +14,7 @@
 #include "plasma_types.h"
 
 #include <pthread.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +29,9 @@ typedef struct {
     int num_panel_threads;          ///< no. threads for panel factorization
     plasma_barrier_t barrier;       ///< thread barrier for multithreaded tasks
     plasma_enum_t householder_mode; ///< PlasmaHouseholderMode
+    uint64_t start;
+    uint64_t stop;
+    double time;
 } plasma_context_t;
 
 typedef struct {
