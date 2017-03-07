@@ -470,12 +470,12 @@ int test_routine(int test, const char *name, param_value_t pval[])
     char* places = "-";
 #if defined(__clang__)
     char* compiler = "clang";
+#elif defined(_MERCURIUM) || defined(_MCC)
+    char* compiler = "ompss";
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
     char* compiler = "icc";
 #elif defined(__GNUC__) || defined(__GNUG__)
     char* compiler = "gcc";
-#elif defined(_MERCURIUM) || defined(_MCC)
-    char* compiler = "ompss";
 #else 
     char* compiler = "-";
 #endif
