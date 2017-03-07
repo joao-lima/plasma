@@ -50,6 +50,7 @@ int plasma_context_detach();
 plasma_context_t *plasma_context_self();
 void plasma_context_init(plasma_context_t *context);
 
+uint64_t kaapi_get_elapsedns(void);
 #ifdef __cplusplus
 }  // extern "C"
 #endif
