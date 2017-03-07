@@ -165,6 +165,7 @@ static const int InfoLen = 1024;
 static const int InfoSpacing = 11;
 
 uint64_t get_elapsedtime(void);
+uint64_t kaapi_get_elapsedns(void);
 // function declarations
 void print_main_usage();
 void print_routine_usage(const char *name);

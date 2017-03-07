@@ -25,6 +25,7 @@
 #include <likwid.h>
 #endif
 
+#include <time.h>
 #include <sys/time.h>
 uint64_t get_elapsedtime(void)
 {
@@ -32,6 +33,29 @@ uint64_t get_elapsedtime(void)
   int err = gettimeofday( &tv, 0);
   if (err  !=0) return 0;
   return (uint64_t)tv.tv_sec + (uint64_t)(1e-6*tv.tv_usec);
+}
+
+#if 1
+typedef struct timespec struct_time;
+#  define gettime(t) clock_gettime( CLOCK_REALTIME, t)
+#  define get_sub_seconde(t) (1e-9*(double)t.tv_nsec)
+#  define get_sub_seconde_ns(t) ((uint64_t)t.tv_nsec)
+#else
+typedef struct timeval struct_time;
+#  define gettime(t) gettimeofday( t, 0)
+#  define get_sub_seconde(t) (1e-6*(double)t.tv_usec)
+#  define get_sub_seconde_ns(t) (1000*(uint64_t)t.tv_usec)
+#endif
+
+uint64_t kaapi_get_elapsedns(void)
+{
+  uint64_t retval;
+  struct_time st;
+  int err = gettime(&st);
+  if (err != 0) return (uint64_t)0UL;
+  retval = (uint64_t)st.tv_sec * 1000000000ULL;
+  retval += get_sub_seconde_ns(st);
+  return retval;
 }
 
 /******************************************************************************/

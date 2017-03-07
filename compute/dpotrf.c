@@ -149,7 +149,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dpotrf_start = get_elapsedtime();
+    _dpotrf_start = kaapi_get_elapsedns();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -175,7 +175,7 @@ int plasma_dpotrf(plasma_enum_t uplo,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dpotrf_stop = get_elapsedtime();
+    _dpotrf_stop = kaapi_get_elapsedns();
 
     #pragma omp parallel
     #pragma omp master

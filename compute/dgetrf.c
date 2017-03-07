@@ -98,7 +98,7 @@ int plasma_dgetrf(int m, int n,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgetrf_start = get_elapsedtime();
+    _dgetrf_start = kaapi_get_elapsedns();
     double start = omp_get_wtime();
 #if defined(_LIKWID)
     #pragma omp parallel
@@ -124,7 +124,7 @@ int plasma_dgetrf(int m, int n,
 #if defined(_SLEEP)
     sleep(_SLEEP);
 #endif
-    _dgetrf_stop =get_elapsedtime();
+    _dgetrf_stop =kaapi_get_elapsedns();
 
     #pragma omp parallel
     #pragma omp master
