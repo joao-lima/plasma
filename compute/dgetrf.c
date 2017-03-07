@@ -21,7 +21,6 @@
 #include <unistd.h>
 
 #include <omp.h>
-#include "mkl_lapacke.h"
 double _dgetrf_time;
 uint64_t _dgetrf_start;
 uint64_t _dgetrf_stop ;
